@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.finalproject.ui.theme.white
 
 @Composable
 fun NormalTextComponent(value: String) {
@@ -31,6 +32,7 @@ fun NormalTextComponent(value: String) {
             fontWeight = FontWeight.Normal,
             fontSize = 18.sp,
             fontStyle = FontStyle.Normal,
+            color = white
         ),
         modifier = Modifier
             .fillMaxWidth()
