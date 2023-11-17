@@ -18,4 +18,6 @@ data class Event(
     val expired: Boolean = false,
     val registerLink: String = "www.google.com",
     val imageURL: String = "https://apru.org/wp-content/uploads/2021/12/HKUST.png"
+
+
 )
