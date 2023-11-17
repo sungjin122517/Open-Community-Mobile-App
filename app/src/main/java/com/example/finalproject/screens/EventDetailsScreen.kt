@@ -1,31 +1,146 @@
 package com.example.finalproject.screens
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.finalproject.components.NormalTextComponent
+import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import com.example.finalproject.components.CategoryButton
+import com.example.finalproject.components.CategoryHashtag
+import com.example.finalproject.components.DetailedView
+import com.example.finalproject.components.EventDescription
+import com.example.finalproject.components.EventDetailPhoto
+import com.example.finalproject.models.Event
+import com.example.finalproject.viewModels.EventViewModel
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import com.example.finalproject.components.EventTitle
+import com.example.finalproject.components.QuickView
+import com.example.finalproject.ui.theme.darkBackground
+import com.example.finalproject.ui.theme.white
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventDetailsScreen() {
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .padding(28.dp)
-    ) {
-        Column (
-            modifier = Modifier
+fun EventDetailsScreen(eventViewModel: EventViewModel) {
+//    val userInfoSnap = /* TODO: Add code to fetch user info snapshot */
+//    val isEventSaved = /* TODO: Add code to determine if the event is saved */
+
+    val event = eventViewModel.event
+
+    Scaffold(
+        contentColor = darkBackground,
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.smallTopAppBarColors(
+                    containerColor = darkBackground,
+                    titleContentColor = white,
+                ),
+                title = { Text(text = "Event") },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            /* TODO: Add code to navigate to 'report' screen */
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Warning,
+                            contentDescription = "Report"
+                        )
+                    }
+                }
+            )
+        },
+        content = {
+            Box(modifier = Modifier
                 .fillMaxSize()
-        ){
-            NormalTextComponent(value = "Event Details")
-
+                .background(darkBackground)
+            ) {
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState())
+                ) {
+                    EventDetailPhoto(event = event!!)
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 15.dp)
+                    ) {
+                        CategoryButton(value = event.category)
+                        EventTitle(value = event.title)
+                        CategoryHashtag(event = event)
+                        QuickView(event = event)
+                        EventDescription(event = event)
+                        DetailedView(event = event)
+                    }
+                    Row(
+                        modifier = Modifier
+//                            .align(Alignment.BottomStart)
+                            .padding(start = 20.dp, bottom = 45.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                /* TODO: Add code to launch the event registration URL */
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth(0.76f)
+                                .height(48.dp),
+                            shape = RoundedCornerShape(10.dp),
+//                            colors = Color(hexStringToColor(buttonColor(event.category)))
+                        ) {
+                            Text(
+                                text = "Register",
+                                fontSize = 16.sp,
+                                fontFamily = FontFamily.SansSerif,
+                                fontWeight = FontWeight.W500
+                            )
+                        }
+//                        EventSaveButton(
+//                            controller = /* TODO: Add the event controller */,
+//                            currentUser = /* TODO: Add the current user */,
+//                            saved = isEventSaved,
+//                            modifier = Modifier.padding(start = 18.dp)
+//                        )
+                    }
+                }
+            }
         }
-
-    }
+    )
 }
