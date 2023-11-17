@@ -30,31 +30,21 @@ import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.components.BottomBarScreen
 import com.example.finalproject.components.NormalTextComponent
 import com.example.finalproject.navigation.HomeNavGraph
+import com.example.finalproject.ui.theme.darkBackground
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavHostController = rememberNavController()) {
-//    Surface(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color.White)
-//            .padding(28.dp)
-//    ) {
-//        Column (
-//            modifier = Modifier
-//                .fillMaxSize()
-//        ){
-//            BottomBar(navController = navController)
-//            EventNavGraph(navController = navController)
-//
-//        }
-//    }
-
     Scaffold(
         bottomBar = { BottomBar(navController = navController) },
-        content = {
-            HomeNavGraph(navController = navController)
+        content = { padding ->
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+            ){
+                HomeNavGraph(navController = navController)
+            }
         }
     )
 }
