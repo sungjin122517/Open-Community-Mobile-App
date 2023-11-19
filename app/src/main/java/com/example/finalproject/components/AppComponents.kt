@@ -65,27 +65,3 @@ fun MyTextFieldComponent(labelValue: String) {
 //        }
     )
 }
-
-//@Composable
-//fun ButtonComponent(value: String) {
-//    Button(
-//        onClick = { /*TODO*/ },
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .heightIn(48.dp),
-//        contentPadding = PaddingValues(),
-//        colors = ButtonDefaults.buttonColors(Color.Gray)
-//    ) {
-//        Box(modifier = Modifier
-//            .fillMaxWidth()
-//            .heightIn(48.dp),
-//            contentAlignment = Alignment.Center,
-//        ) {
-//            Text(
-//                text = value,
-//                fontSize = 18.sp,
-//                fontWeight = FontWeight.Bold
-//                )
-//        }
-//    }
-//}
