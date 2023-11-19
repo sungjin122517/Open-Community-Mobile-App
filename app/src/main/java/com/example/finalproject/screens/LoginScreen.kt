@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import com.example.finalproject.components.MyTextFieldComponent
 import com.example.finalproject.components.NormalTextComponent
 import com.example.finalproject.ui.theme.darkBackground
+import com.example.finalproject.ui.theme.grey
 
 @Composable
 fun LoginScreen(
@@ -51,7 +52,7 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .heightIn(48.dp),
                 contentPadding = PaddingValues(),
-                colors = ButtonDefaults.buttonColors(Color.Gray)
+                colors = ButtonDefaults.buttonColors(grey)
             ) {
                 Box(modifier = Modifier
                     .fillMaxWidth()

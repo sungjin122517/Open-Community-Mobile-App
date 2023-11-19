@@ -12,6 +12,7 @@ import com.example.finalproject.screens.EventScreen
 import com.example.finalproject.screens.PostDetailsScreen
 import com.example.finalproject.screens.PostScreen
 import com.example.finalproject.screens.ProfileScreen
+import com.example.finalproject.screens.ReportScreen
 import com.example.finalproject.viewModels.EventViewModel
 
 @Composable
@@ -43,7 +44,7 @@ fun HomeNavGraph(navController: NavHostController) {
             route = Graph.EVENT_DETAILS
         ) {
 //            val event = navController.currentBackStackEntry?.savedStateHandle?.get<Event>("event")
-            EventDetailsScreen(eventViewModel)
+            EventDetailsScreen(navController, eventViewModel)
         }
         composable(
             route = Graph.POST_DETAILS
@@ -54,6 +55,11 @@ fun HomeNavGraph(navController: NavHostController) {
             route = Graph.PROFILE
         ) {
             ProfileScreen()
+        }
+        composable(
+            route = Graph.REPORT
+        ) {
+            ReportScreen(navController)
         }
     }
 }
