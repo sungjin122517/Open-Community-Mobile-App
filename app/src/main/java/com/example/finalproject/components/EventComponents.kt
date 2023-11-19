@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.finalproject.models.Event
+import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.green
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.white
@@ -92,11 +93,12 @@ fun EventPhoto(event: Event) {
 fun CategoryButton(value: String) {
     Row(
         modifier = Modifier
-            .height(IntrinsicSize.Min),
+            .height(35.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
+                .padding(horizontal = 5.dp)
                 .clip(RoundedCornerShape(20))
                 .border(
                     1.5.dp,
@@ -105,7 +107,6 @@ fun CategoryButton(value: String) {
                 .background(
                     color = Color.Transparent,
                 )
-                .padding(horizontal = 5.dp)
         ) {
             Text(
                 text = value,
@@ -117,20 +118,20 @@ fun CategoryButton(value: String) {
                 )
             )
         }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(
-            onClick = {
-
-            },
-            modifier = Modifier.padding(start = 8.dp),
-            content = {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = "Report",
-                    tint = white
-                )
-            }
-        )
+//        Spacer(modifier = Modifier.weight(1f))
+//        IconButton(
+//            onClick = {
+//
+//            },
+//            modifier = Modifier.padding(start = 8.dp),
+//            content = {
+//                Icon(
+//                    imageVector = Icons.Default.Email,
+//                    contentDescription = "Report",
+//                    tint = white
+//                )
+//            }
+//        )
     }
 }
 
@@ -163,8 +164,8 @@ fun EventHashTag(event: Event) {
             fontWeight = FontWeight.Normal
         ),
         modifier = Modifier
-            .width(168.dp)
             .padding(top = 10.dp)
+            .width(168.dp)
     )
 }
 
@@ -190,7 +191,7 @@ fun EventDetailPhoto(event: Event) {
 
 @Composable
 fun SingleHashtag(event: Event, index: Int) {
-    val backgroundColor = Color.Transparent
+    val backgroundColor = darkBackground
 
     Box(
         modifier = Modifier
@@ -219,11 +220,10 @@ fun CategoryHashtag(event: Event) {
 
 @Composable
 fun QuickView(event: Event) {
-    val backgroundColor = Color.Transparent
+    val backgroundColor = darkBackground
 
     Column(
         modifier = Modifier
-            .padding(top = 18.dp)
             .fillMaxWidth()
             .background(color = backgroundColor, shape = RoundedCornerShape(6.dp))
             .padding(start = 17.dp, top = 22.dp, end = 17.dp, bottom = 22.dp)
@@ -273,7 +273,7 @@ fun EventDescription(event: Event) {
         modifier = Modifier
             .padding(
                 top = 18.dp,
-                end = 10.dp
+                bottom = 18.dp
             )
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.Start,
@@ -290,11 +290,10 @@ fun EventDescription(event: Event) {
 
 @Composable
 fun DetailedView(event: Event) {
-    val backgroundColor = Color.Transparent
+    val backgroundColor = darkBackground
 
     Column(
         modifier = Modifier
-            .padding(top = 18.dp)
             .fillMaxWidth()
             .background(color = backgroundColor, shape = RoundedCornerShape(6.dp))
             .padding(start = 17.dp, top = 22.dp, end = 17.dp, bottom = 22.dp)

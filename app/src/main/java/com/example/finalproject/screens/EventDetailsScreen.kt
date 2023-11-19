@@ -19,6 +19,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -42,6 +43,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.finalproject.components.CategoryButton
@@ -55,31 +59,51 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import com.example.finalproject.components.EventTitle
 import com.example.finalproject.components.QuickView
+import com.example.finalproject.navigation.EventDetailsNavGraph
+import com.example.finalproject.navigation.Graph
+import com.example.finalproject.navigation.HomeNavGraph
 import com.example.finalproject.ui.theme.darkBackground
+import com.example.finalproject.ui.theme.darkerBackground
 import com.example.finalproject.ui.theme.white
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventDetailsScreen(eventViewModel: EventViewModel) {
+fun EventDetailsScreen(navController: NavHostController, eventViewModel: EventViewModel) {
 //    val userInfoSnap = /* TODO: Add code to fetch user info snapshot */
 //    val isEventSaved = /* TODO: Add code to determine if the event is saved */
 
     val event = eventViewModel.event
 
     Scaffold(
-        contentColor = darkBackground,
+        contentColor = darkerBackground,
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = darkBackground,
+                    containerColor = darkerBackground,
                     titleContentColor = white,
                 ),
-                title = { Text(text = "Event") },
+                title = {
+                    Text(
+                        text = "Event",
+                        fontSize = 18.sp
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = white
+                        )
+                    }
+                },
                 actions = {
                     IconButton(
                         onClick = {
                             /* TODO: Add code to navigate to 'report' screen */
+                            navController.navigate(Graph.REPORT)
+
                         }
                     ) {
                         Icon(
@@ -91,9 +115,10 @@ fun EventDetailsScreen(eventViewModel: EventViewModel) {
             )
         },
         content = {
+//            EventDetailsNavGraph(navController = rememberNavController())
             Box(modifier = Modifier
                 .fillMaxSize()
-                .background(darkBackground)
+                .background(darkerBackground)
             ) {
                 Column(
                     modifier = Modifier.verticalScroll(rememberScrollState())
@@ -101,15 +126,19 @@ fun EventDetailsScreen(eventViewModel: EventViewModel) {
                     EventDetailPhoto(event = event!!)
                     Column(
                         modifier = Modifier
-                            .padding(start = 15.dp)
+                            .padding(start = 15.dp, end = 15.dp)
                     ) {
                         CategoryButton(value = event.category)
                         EventTitle(value = event.title)
                         CategoryHashtag(event = event)
+                        Spacer(modifier = Modifier.height(20.dp))
                         QuickView(event = event)
                         EventDescription(event = event)
                         DetailedView(event = event)
                     }
+                    Spacer(modifier = Modifier
+                        .height(20.dp)
+                    )
                     Row(
                         modifier = Modifier
 //                            .align(Alignment.BottomStart)
@@ -144,3 +173,19 @@ fun EventDetailsScreen(eventViewModel: EventViewModel) {
         }
     )
 }
+
+//@OptIn(ExperimentalMaterial3Api::class)
+//@Composable
+//fun EventDetailsPage(navController: NavHostController) {
+//    Scaffold(
+////        bottomBar = { BottomBar(navController = navController) },
+//        content = { padding ->
+//            Column(
+//                modifier = Modifier
+//                    .padding(padding)
+//            ){
+//                EventDetailsNavGraph(navController = navController)
+//            }
+//        }
+//    )
+//}

@@ -27,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,7 +54,8 @@ import com.example.finalproject.components.EventTitle
 import com.example.finalproject.components.NormalTextComponent
 import com.example.finalproject.models.Event
 import com.example.finalproject.navigation.Graph
-import com.example.finalproject.ui.theme.darkBackground
+import com.example.finalproject.ui.theme.darkerBackground
+import com.example.finalproject.ui.theme.white
 import com.example.finalproject.viewModels.EventViewModel
 import java.text.SimpleDateFormat
 
@@ -74,24 +76,30 @@ fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(darkBackground)
+            .background(darkerBackground)
     ) {
         Column (
             modifier = Modifier
                 .fillMaxSize()
-                .background(darkBackground)
+                .background(darkerBackground)
         ){
             TabRow(
                 selectedTabIndex = selectedTabIndex.value,
-//                backgroundColor = MaterialTheme.colors.primary
+                contentColor = white
             ) {
+                val isSelected =
                 tabItems.forEachIndexed { index, item ->
                     Tab(
                         selected = selectedTabIndex.value == index,
                         onClick = { selectedTabIndex.value = index },
+                        modifier = Modifier.background(darkerBackground),
                         text = {
-                            Text(text = item.title)
+                            Text(
+                                text = item.title,
+                                fontWeight = if (selectedTabIndex.value == index) FontWeight.Bold else FontWeight.Light,
+                            )
                         },
+//                        selectedContentColor = white
                     )
                 }
             }
@@ -101,8 +109,6 @@ fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
                     .fillMaxSize()
                     .weight(1f)
                 ) {index ->
-
-                
             }
             EventList(events = eventList, navController, eventViewModel)
 
@@ -128,7 +134,7 @@ fun EventUI(event: Event, navController: NavController, eventViewModel: EventVie
         modifier = Modifier
             .padding(start = 8.dp, top = 12.dp, end = 6.dp)
             .width(176.dp)
-            .background(darkBackground)
+            .background(darkerBackground)
             .clickable {
 //                navController.currentBackStackEntry?.savedStateHandle?.set(
 //                    key = "event",
