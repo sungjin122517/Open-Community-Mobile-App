@@ -11,6 +11,7 @@ import com.example.finalproject.screens.EventDetailsScreen
 import com.example.finalproject.screens.EventScreen
 import com.example.finalproject.screens.ProfileScreen
 import com.example.finalproject.screens.ReportScreen
+import com.example.finalproject.screens.ReportScreen
 import com.example.finalproject.viewModels.AuthViewModel
 import com.example.finalproject.viewModels.EventViewModel
 
