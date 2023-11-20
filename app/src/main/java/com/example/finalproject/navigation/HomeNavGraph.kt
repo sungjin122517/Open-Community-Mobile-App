@@ -45,11 +45,11 @@ fun HomeNavGraph(navController: NavHostController) {
 //            val event = navController.currentBackStackEntry?.savedStateHandle?.get<Event>("event")
             EventDetailsScreen(eventViewModel)
         }
-        composable(
-            route = Graph.POST_DETAILS
-        ) {
-            PostDetailsScreen()
-        }
+//        composable(
+//            route = Graph.POST_DETAILS
+//        ) {
+//            PostDetailsScreen()
+//        }
         composable(
             route = Graph.PROFILE
         ) {
