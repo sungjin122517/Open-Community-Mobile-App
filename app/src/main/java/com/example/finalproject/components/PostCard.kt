@@ -26,9 +26,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-//import androidx.navigation.NavGraph.Companion.findStartDestination
-//import androidx.navigation.NavHostController
-//import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.models.Post
 import com.example.finalproject.models.PostCategory
@@ -47,9 +47,9 @@ fun PostCard(modifier: Modifier, post: Post, navController: NavController) {
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
         ),
-//        onClick = {
-//            navController.navigate("post_detail/0")
-//        },
+        onClick = {
+            navController.navigate("post_detail/0")
+        },
         shape = RectangleShape,
     ) {
         // Define the content of the card

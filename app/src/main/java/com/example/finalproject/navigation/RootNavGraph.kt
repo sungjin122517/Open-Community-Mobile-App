@@ -25,7 +25,8 @@ object Graph {
     const val AUTHENTICATION = "auth_graph"
     const val EVENT = "event_graph"
     const val EVENT_DETAILS = "event_detail_graph/{event}"
-    const val POST_DETAILS = "post_detail_graph"
+    const val POST_DETAILS = "post_detail/{postID}"
     const val PROFILE = "profile_graph"
+    const val COMMUNITY = "community"
     const val REPORT = "report_graph"
 }
