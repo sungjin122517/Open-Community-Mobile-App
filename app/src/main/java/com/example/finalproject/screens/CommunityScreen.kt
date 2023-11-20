@@ -1,6 +1,5 @@
-package com.example.finalproject.components
+package com.example.finalproject.screens
 
-import android.Manifest
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.example.finalproject.components.PostCard
 import com.example.finalproject.models.fetchPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
