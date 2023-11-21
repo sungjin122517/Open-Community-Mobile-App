@@ -41,6 +41,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -50,6 +51,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.finalproject.components.CategoryButton
 import com.example.finalproject.components.CategoryHashtag
+import com.example.finalproject.components.CommentCard
 import com.example.finalproject.components.DetailedView
 import com.example.finalproject.components.EventDescription
 import com.example.finalproject.components.EventDetailPhoto
@@ -59,12 +61,15 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 import com.example.finalproject.components.EventTitle
 import com.example.finalproject.components.QuickView
+import com.example.finalproject.models.Comment
 import com.example.finalproject.navigation.EventDetailsNavGraph
 import com.example.finalproject.navigation.Graph
 import com.example.finalproject.navigation.HomeNavGraph
+import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.darkerBackground
 import com.example.finalproject.ui.theme.white
+import java.util.Date
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -174,18 +179,12 @@ fun EventDetailsScreen(navController: NavHostController, eventViewModel: EventVi
     )
 }
 
-//@OptIn(ExperimentalMaterial3Api::class)
+
+//@Preview(showBackground = true)
 //@Composable
-//fun EventDetailsPage(navController: NavHostController) {
-//    Scaffold(
-////        bottomBar = { BottomBar(navController = navController) },
-//        content = { padding ->
-//            Column(
-//                modifier = Modifier
-//                    .padding(padding)
-//            ){
-//                EventDetailsNavGraph(navController = navController)
-//            }
-//        }
-//    )
+//fun EventDetailsPagePreview() {
+//    FinalProjectTheme(darkTheme = true) {
+//        EventDetailsScreen(navController = NavHostController(LocalContext.current), eventViewModel = EventViewModel()
+//        )
+//    }
 //}
