@@ -1,17 +1,21 @@
 package com.example.finalproject.components
 
 //import android.content.Context
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -34,50 +38,65 @@ import com.example.finalproject.models.Post
 import com.example.finalproject.models.PostCategory
 import com.example.finalproject.models.PostStatus
 import com.example.finalproject.models.fetchPost
+import com.example.finalproject.ui.theme.darkerBackground
 
 import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCard(modifier: Modifier, post: Post, navController: NavController) {
-    // Define the layout and style of the card
-    Card(
-        modifier = modifier
-            .fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 8.dp
-        ),
-        onClick = {
-            navController.navigate("post_detail/0")
-        },
-        shape = RectangleShape,
-    ) {
-        // Define the content of the card
-        Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+    Column {
+
+        // Define the layout and style of the card
+        Card(
+            modifier = modifier
+                .fillMaxWidth(),
+    //        elevation = CardDefaults.cardElevation(
+    //            defaultElevation = 8.dp
+    //        ),
+            onClick = {
+                navController.navigate("post_detail/0")
+            },
+            shape = RectangleShape,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
+//            border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.surfaceVariant),
         ) {
-            // Display Header
-            PostCardHeader(post.category, post.time)
-            // Display the user name and the post time
-            Text(
-                text = post.title,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-            // Display the post content
-            Text(
-                text = post.text,
-                fontSize = 16.sp,
+            // Define the content of the card
+            Column(
                 modifier = Modifier
-//                    .padding(8.dp)
+                    .padding(16.dp)
                     .fillMaxWidth()
-            )
+            ) {
+                // Display Header
+                PostCardHeader(post.category, post.time)
+                // Display the user name and the post time
+                Text(
+                    text = post.title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+                // Display the post content
+                Text(
+                    text = post.text,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+    //                    .padding(8.dp)
+                        .fillMaxWidth()
+                )
 
-            PostCardStatus(post.status)
+                PostCardStatus(post.status)
 
+            }
         }
+
+        Spacer(     // horizontal divisor
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(color = MaterialTheme.colorScheme.surfaceVariant)
+        )
     }
 }
 
