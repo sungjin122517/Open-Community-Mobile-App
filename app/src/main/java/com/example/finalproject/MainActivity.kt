@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             navController = rememberNavController()
-            FinalProjectTheme {
+            FinalProjectTheme(darkTheme = true) {
                 RootNavigationGraph(navController)
             }
             AuthState()
