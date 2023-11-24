@@ -1,12 +1,17 @@
 package com.example.finalproject.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TabRow
@@ -21,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -54,67 +60,85 @@ fun CommunityScreen(navController: NavController) {
     */
 //    val communityNavController = rememberNavController()
 
-     Column(
-        modifier = Modifier
-            .fillMaxSize()
-     ) {
-        // state for listen to refreshing
-        var isRefreshing by remember {
-            mutableStateOf(false)
-        }
+    Scaffold (
+        topBar = {TopAppBar(title = {Text("Community")})}
+    ) {
+        Column(modifier = Modifier.padding(it)) {
 
-        val (checkPostFeed, setCheckPostFeed) = remember {
-            mutableStateOf(checkPostFeed())
-        }
-        val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
-            isRefreshing = true
-            setCheckPostFeed(!checkPostFeed)
-            isRefreshing = false
-        })
-
-        if (checkPostFeed) {
-            LazyColumn(
+            Spacer(     // horizontal divisor
                 modifier = Modifier
-//                    .padding(it)
-                    .fillMaxSize()
-                    .pullRefresh(state),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                items(5) {
-                    PostCard(
-                        Modifier,
-                        post = fetchPost(0),
-                        navController
-                    )
-                }
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
+            )
 
+            // state for listen to refreshing
+            var isRefreshing by remember {
+                mutableStateOf(false)
             }
-        }else {
-            LazyColumn(
+
+            val (checkPostFeed, setCheckPostFeed) = remember {
+                mutableStateOf(checkPostFeed())
+            }
+            val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
+                isRefreshing = true
+                setCheckPostFeed(!checkPostFeed)
+                isRefreshing = false
+            })
+
+            if (checkPostFeed) {
+                LazyColumn(
+                    modifier = Modifier
+    //                    .padding(it)
+                        .fillMaxSize()
+                        .pullRefresh(state),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    items(5) {
+                        PostCard(
+                            Modifier,
+                            post = fetchPost(0),
+                            navController
+                        )
+                    }
+
+                }
+            }else {
+                LazyColumn(
+                    modifier = Modifier
+    //                    .padding(it)
+                        .fillMaxSize()
+                        .pullRefresh(state),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    item {
+                        Text("No Post Yet", modifier = Modifier)
+                    }
+                }
+            }
+
+            PullRefreshIndicator(
+                refreshing = isRefreshing, state = state,
                 modifier = Modifier
-//                    .padding(it)
                     .fillMaxSize()
-                    .pullRefresh(state),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                item {
-                    Text("No Post Yet", modifier = Modifier)
-                }
-            }
+            )
         }
-
-        PullRefreshIndicator(
-            refreshing = isRefreshing, state = state,
-            modifier = Modifier
-                .fillMaxSize()
-        )
 
    }
 }
 
 fun checkPostFeed(): Boolean {
     return true
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CommunityTopBar() {
+    Column {
+
+
+    }
 }
 
 @Preview(showBackground = true)
