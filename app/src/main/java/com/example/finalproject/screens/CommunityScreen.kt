@@ -2,11 +2,14 @@ package com.example.finalproject.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -19,8 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.components.PostCard
 import com.example.finalproject.models.fetchPost
+import com.example.finalproject.navigation.HomeNavGraph
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -48,9 +54,10 @@ fun CommunityScreen(navController: NavController) {
     */
 //    val communityNavController = rememberNavController()
 
-    Scaffold (
-        topBar = {TopAppBar(title = {Text("Community")})}
-    ) {
+     Column(
+        modifier = Modifier
+            .fillMaxSize()
+     ) {
         // state for listen to refreshing
         var isRefreshing by remember {
             mutableStateOf(false)
@@ -68,7 +75,7 @@ fun CommunityScreen(navController: NavController) {
         if (checkPostFeed) {
             LazyColumn(
                 modifier = Modifier
-                    .padding(it)
+//                    .padding(it)
                     .fillMaxSize()
                     .pullRefresh(state),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -85,7 +92,7 @@ fun CommunityScreen(navController: NavController) {
         }else {
             LazyColumn(
                 modifier = Modifier
-                    .padding(it)
+//                    .padding(it)
                     .fillMaxSize()
                     .pullRefresh(state),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -114,6 +121,22 @@ fun checkPostFeed(): Boolean {
 @Composable
 fun CommunityScreenPreview() {
     FinalProjectTheme(darkTheme = true) {
-        CommunityScreen(navController = NavController(LocalContext.current))
+        val navController = rememberNavController()
+        Scaffold(
+            bottomBar = { BottomBar(navController)},
+            content = { padding ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                ){
+                    CommunityScreen(navController)
+//                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+//                    val currentDestination = navBackStackEntry?.destination
+//
+//                    Text(text = currentDestination?.route?:"hi")
+                }
+            }
+        )
     }
 }

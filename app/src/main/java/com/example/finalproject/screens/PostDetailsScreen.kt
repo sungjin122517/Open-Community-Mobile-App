@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.finalproject.components.CommentSection
 import com.example.finalproject.components.PostCard
@@ -33,6 +38,7 @@ import com.example.finalproject.models.Comment
 import com.example.finalproject.models.fetchComments
 import com.example.finalproject.models.fetchPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
+import com.example.finalproject.ui.theme.white
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import java.util.Date
@@ -85,12 +91,24 @@ fun PostDetailsScreen(postID: Int, navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            PostCard(Modifier, post, navController)
             Spacer(     // horizontal divisor
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(1.dp)
-                    .background(color = Color.Black)
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
+            )
+            PostCard(Modifier, post, navController)
+            Spacer(     // horizontal divisor
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(16.dp)
+                    .background(color = MaterialTheme.colorScheme.background)
+            )
+            Spacer(     // horizontal divisor
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
             )
             CommentSection(comments, modifier = Modifier
                 .pullRefresh(state))
@@ -104,16 +122,16 @@ fun PostDetailsScreen(postID: Int, navController: NavController) {
 @Composable
 fun PostDetailTopBar(navController: NavController) {
     TopAppBar(
-        title = { Text(text = "Post Detail") },
+        title = { Text(text = "Post Detail", fontSize = 18.sp) },
         navigationIcon = {
             IconButton(
                 onClick = { navController.navigateUp() }
             ) {
-//                Icon(
-//                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_arrow_back),
-//                    contentDescription = "Back"
-//                )
-                Text(text = "<-")
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = white
+                )
             }
         }
     )

@@ -1,19 +1,20 @@
 package com.example.finalproject.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import com.example.finalproject.components.BottomBarScreen
 import com.example.finalproject.screens.CommunityScreen
 import com.example.finalproject.screens.PostDetailsScreen
 import com.example.finalproject.ui.theme.FinalProjectTheme
-@Composable
-fun PostNavGraph(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Graph.COMMUNITY) {
+//@Composable
+fun NavGraphBuilder.postNavGraph(navController: NavHostController) {
+    navigation(startDestination = Graph.COMMUNITY, route=BottomBarScreen.Post.route) {
         composable(Graph.COMMUNITY) {
             CommunityScreen(navController)
         }
@@ -32,6 +33,14 @@ fun PostNavGraph(navController: NavHostController) {
 @Composable
 fun MyNavGraphPreview() {
     FinalProjectTheme(darkTheme = true) {
-        PostNavGraph(navController = rememberNavController())
+        val navController = rememberNavController()
+
+        NavHost(
+            navController = navController,
+            route = "post_preview",
+            startDestination = BottomBarScreen.Post.route
+        ) {
+            postNavGraph(navController)
+        }
     }
 }

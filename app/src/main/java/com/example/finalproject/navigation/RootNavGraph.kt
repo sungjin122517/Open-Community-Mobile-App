@@ -52,6 +52,7 @@ object Graph {
     const val EVENT_DETAILS = "event_detail_graph/{event}"
     const val POST_DETAILS = "post_detail/{postID}"
     const val PROFILE = "profile_graph"
+    const val POST = "post"
     const val COMMUNITY = "community"
     const val REPORT = "report_graph"
     const val VERIFY_EMAIL = "verify_email"
