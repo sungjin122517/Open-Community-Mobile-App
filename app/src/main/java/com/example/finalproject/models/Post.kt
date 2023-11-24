@@ -2,9 +2,9 @@ package com.example.finalproject.models
 
 import java.util.Date
 
-enum class PostCategory(val description: String) {
-    JUST_TALK("Posts that are casual and informal"),
-    ACADEMIC("Posts that are related to academic topics")
+enum class PostCategory(val value: String, val description: String) {
+    JUST_TALK("Just talk", "Posts that are casual and informal"),
+    ACADEMIC("Academic", "Posts that are related to academic topics")
 }
 
 data class PostStatus(

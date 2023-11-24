@@ -15,7 +15,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -127,9 +131,10 @@ fun PostCardHeader(category: PostCategory, date: Date, navController: NavControl
 //                    )
 //        Spacer(modifier = Modifier.width(8.dp))
         Text(
-            text = category.toString().lowercase(),
+            text = category.value,
             fontWeight = FontWeight.Bold,
-            fontSize = 16.sp
+            fontSize = 16.sp,
+            color = MaterialTheme.colorScheme.secondary
         )
         Spacer(modifier = Modifier.width(8.dp))
 
@@ -175,38 +180,32 @@ fun PostCardStatus(status: PostStatus) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-//                    Icon(
-//                        imageVector = Icon.Default.Favorite,
-//                        contentDescription = "Likes",
-//                        tint = Color.Red
-//                    )
-            Text(
-                text = "View",
-                fontSize = 14.sp
+            Icon(
+                imageVector = Icons.Default.RemoveRedEye,
+                contentDescription = "Views"
             )
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = status.viewCount.toString(),
-                fontSize = 14.sp
+                fontSize = 16.sp
             )
         }
         // Display the number of comments
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Comment,
-//                        contentDescription = "Comments",
-//                        tint = Color.Blue
-//                    )
-            Text(
-                text = "Comments",
-                fontSize = 14.sp
+            Icon(
+                imageVector = Icons.Default.Comment,
+                contentDescription = "Comments"
             )
-            Spacer(modifier = Modifier.width(4.dp))
+//            Text(
+//                text = "Comments",
+//                fontSize = 14.sp
+//            )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = status.commentCount.toString(),
-                fontSize = 14.sp
+                fontSize = 16.sp
             )
         }
         // Display the number of shares
@@ -219,14 +218,14 @@ fun PostCardStatus(status: PostStatus) {
 //                        contentDescription = "Shares",
 //                        tint = Color.Green
 //                    )
-            Text(
-                text = "Save",
-                fontSize = 14.sp
+            Icon(
+                imageVector = if (status.isSaved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                contentDescription = "Comments"
             )
-            Spacer(modifier = Modifier.width(4.dp))
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = saveCount.toString(),
-                fontSize = 14.sp
+                fontSize = 16.sp
             )
 
         }
