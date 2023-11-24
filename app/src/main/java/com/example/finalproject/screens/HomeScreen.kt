@@ -13,6 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -21,6 +26,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.components.BottomBarScreen
 import com.example.finalproject.navigation.HomeNavGraph
+import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.viewModels.AuthViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -93,6 +99,14 @@ fun RowScope.AddItem(
             }
         }
     )
+}
 
 
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    FinalProjectTheme(darkTheme = true) {
+        val navController = rememberNavController()
+        HomeScreen(navController)
+    }
 }

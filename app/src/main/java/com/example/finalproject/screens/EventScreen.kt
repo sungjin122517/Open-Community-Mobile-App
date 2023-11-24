@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.example.finalproject.components.CategoryButton
@@ -53,6 +54,8 @@ import com.example.finalproject.components.EventPhoto
 import com.example.finalproject.components.EventTitle
 import com.example.finalproject.models.Event
 import com.example.finalproject.navigation.Graph
+import com.example.finalproject.navigation.HomeNavGraph
+import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.darkerBackground
 import com.example.finalproject.ui.theme.white
@@ -166,11 +169,24 @@ fun EventList(events: List<Event>, navController: NavController, eventViewModel:
     }
 }
 
-//@Preview
-//@Composable
-//fun EventScreenPreview() {
-//    EventScreen()
-//}
+@Preview
+@Composable
+fun EventScreenPreview() {
+    FinalProjectTheme(darkTheme = true) {
+        val navController = rememberNavController()
+        Scaffold(
+            bottomBar = { BottomBar(navController = navController) },
+            content = { padding ->
+                Column(
+                    modifier = Modifier
+                        .padding(padding)
+                ){
+                    EventScreen(navController = navController, eventViewModel = EventViewModel())
+                }
+            }
+        )
+    }
+}
 
 //@Preview
 //@Composable
