@@ -1,6 +1,5 @@
 package com.example.finalproject.navigation
 
-import android.media.metrics.Event
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -10,19 +9,21 @@ import com.example.finalproject.components.BottomBarScreen
 import com.example.finalproject.screens.CommunityScreen
 import com.example.finalproject.screens.EventDetailsScreen
 import com.example.finalproject.screens.EventScreen
-import com.example.finalproject.screens.PostDetailsScreen
 import com.example.finalproject.screens.ProfileScreen
 import com.example.finalproject.screens.ReportScreen
+import com.example.finalproject.viewModels.AuthViewModel
 import com.example.finalproject.viewModels.EventViewModel
 
 @Composable
-fun HomeNavGraph(navController: NavHostController) {
+fun HomeNavGraph(
+    navController: NavHostController
+) {
 
     val eventViewModel: EventViewModel = viewModel()
 
     NavHost(
         navController = navController,
-        route = Graph.EVENT,
+        route = Graph.HOME,
         startDestination = BottomBarScreen.Event.route
     ) {
         composable(
@@ -63,22 +64,4 @@ fun HomeNavGraph(navController: NavHostController) {
         }
     }
 }
-
-//fun NavGraphBuilder.eventDetailsNavGraph(navController: NavHostController) {
-//    navigation(
-//        route = Graph.EVENT_DETAILS,
-//        startDestination = DetailsScreen.EventDetails.route
-//    ) {
-//        composable(route = DetailsScreen.EventDetails.route) {
-//            EventDetailsScreen()
-//        }
-//    }
-//}
-
-//sealed class DetailsScreen(val route: String) {
-//    object EventDetails: DetailsScreen(route = Graph.EVENT_DETAILS)
-//    object PostDetails: DetailsScreen(route = Graph.POST_DETAILS)
-//    object Profile: DetailsScreen(route = Graph.PROFILE)
-//    object Report : DetailsScreen(route = Graph.REPORT)
-//}
 
