@@ -90,7 +90,7 @@ fun EventDetailsScreen(navController: NavHostController, eventViewModel: EventVi
                 ),
                 title = {
                     Text(
-                        text = "Event",
+                        text = "",
                         fontSize = 18.sp
                     )
                 },
@@ -184,7 +184,7 @@ fun EventDetailsScreen(navController: NavHostController, eventViewModel: EventVi
 //@Composable
 //fun EventDetailsPagePreview() {
 //    FinalProjectTheme(darkTheme = true) {
-//        EventDetailsScreen(navController = NavHostController(LocalContext.current), eventViewModel = EventViewModel()
+//        EventDetailsScreen(navController = rememberNavController(), eventViewModel = EventViewModel()
 //        )
 //    }
 //}

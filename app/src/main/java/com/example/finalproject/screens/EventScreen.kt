@@ -51,9 +51,9 @@ import com.example.finalproject.components.EventDate
 import com.example.finalproject.components.EventHashTag
 import com.example.finalproject.components.EventPhoto
 import com.example.finalproject.components.EventTitle
-import com.example.finalproject.components.NormalTextComponent
 import com.example.finalproject.models.Event
 import com.example.finalproject.navigation.Graph
+import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.darkerBackground
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.viewModels.EventViewModel
@@ -76,12 +76,12 @@ fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(darkerBackground)
+            .background(darkBackground)
     ) {
         Column (
             modifier = Modifier
                 .fillMaxSize()
-                .background(darkerBackground)
+                .background(darkBackground)
         ){
             TabRow(
                 selectedTabIndex = selectedTabIndex.value,
