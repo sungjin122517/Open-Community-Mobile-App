@@ -114,7 +114,7 @@ fun CommunityScreen(navController: NavController) {
 }
 
 fun checkPostFeed(): Boolean {
-    return false
+    return true
 }
 
 @Preview(showBackground = true)

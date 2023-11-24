@@ -5,21 +5,32 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ComposeCompilerApi
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,6 +49,7 @@ import com.example.finalproject.models.Post
 import com.example.finalproject.models.PostCategory
 import com.example.finalproject.models.PostStatus
 import com.example.finalproject.models.fetchPost
+import com.example.finalproject.navigation.Graph
 import com.example.finalproject.ui.theme.darkerBackground
 
 import java.util.Date
@@ -70,19 +82,20 @@ fun PostCard(modifier: Modifier, post: Post, navController: NavController) {
                     .fillMaxWidth()
             ) {
                 // Display Header
-                PostCardHeader(post.category, post.time)
+                PostCardHeader(post.category, post.time, navController)
                 // Display the user name and the post time
                 Text(
                     text = post.title,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    modifier = Modifier.padding(bottom=8.dp)
                 )
                 // Display the post content
                 Text(
                     text = post.text,
                     fontSize = 16.sp,
                     modifier = Modifier
-    //                    .padding(8.dp)
+                        .padding(bottom = 8.dp)
                         .fillMaxWidth()
                 )
 
@@ -102,7 +115,7 @@ fun PostCard(modifier: Modifier, post: Post, navController: NavController) {
 
 
 @Composable
-fun PostCardHeader(category: PostCategory, date: Date) {
+fun PostCardHeader(category: PostCategory, date: Date, navController: NavController) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -119,11 +132,15 @@ fun PostCardHeader(category: PostCategory, date: Date) {
             fontSize = 16.sp
         )
         Spacer(modifier = Modifier.width(8.dp))
+
         Text(
             text = date.toString(),
             color = Color.Gray,
             fontSize = 14.sp
         )
+        Spacer(modifier = Modifier.width(8.dp))
+
+        PostDropDownMenu(navController)
     }
 }
 
@@ -212,6 +229,38 @@ fun PostCardStatus(status: PostStatus) {
                 fontSize = 14.sp
             )
 
+        }
+    }
+}
+
+@Composable
+fun PostDropDownMenu(navController: NavController) {
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+
+        var expended by remember {
+            mutableStateOf(false)
+        }
+        IconButton(
+            onClick = {
+                /* TODO: Add code to navigate to 'report' screen */
+//                    navController.navigate(Graph.REPORT)
+                expended = true
+
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "Report"
+            )
+        }
+        DropdownMenu(
+            expanded = expended,
+            onDismissRequest = {
+                expended = false
+            },
+            modifier = Modifier
+        ) {
+            DropdownMenuItem(text = { Text("Report") }, onClick = { navController.navigate(Graph.REPORT) })
         }
     }
 }

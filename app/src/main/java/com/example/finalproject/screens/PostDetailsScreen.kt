@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +38,7 @@ import com.example.finalproject.components.PostCard
 import com.example.finalproject.models.Comment
 import com.example.finalproject.models.fetchComments
 import com.example.finalproject.models.fetchPost
+import com.example.finalproject.navigation.Graph
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.white
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -133,7 +135,21 @@ fun PostDetailTopBar(navController: NavController) {
                     tint = white
                 )
             }
-        }
+        },
+//        actions = {
+//            IconButton(
+//                onClick = {
+//                    /* TODO: Add code to navigate to 'report' screen */
+//                    navController.navigate(Graph.REPORT)
+//
+//                }
+//            ) {
+//                Icon(
+//                    imageVector = Icons.Default.Warning,
+//                    contentDescription = "Report",
+//                )
+//            }
+//        }
     )
 }
 
