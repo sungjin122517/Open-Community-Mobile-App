@@ -1,21 +1,29 @@
 package com.example.finalproject
 
+import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.example.finalproject.data.USER_ID
 import com.example.finalproject.navigation.Graph
 import com.example.finalproject.navigation.RootNavigationGraph
 import com.example.finalproject.ui.theme.FinalProjectTheme
-import com.example.finalproject.viewModels.AuthViewModel
 import com.example.finalproject.viewModels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.runBlocking
+
+val Context.dataStore by preferencesDataStore(name = "setting")
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -24,6 +32,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             navController = rememberNavController()
             FinalProjectTheme(darkTheme = true) {
@@ -34,6 +43,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
+    @SuppressLint("CommitPrefEdits", "CoroutineCreationDuringComposition")
     @Composable
     private fun AuthState() {
         val isUserSignedOut = viewModel.getAuthState().collectAsState().value
@@ -41,6 +51,14 @@ class MainActivity : ComponentActivity() {
             NavigateToSignInScreen()
         } else {
             if (viewModel.isEmailVerified) {
+                val userID = viewModel.userID
+
+                runBlocking {
+                    applicationContext.dataStore.edit { settings ->
+                        settings[USER_ID] = userID
+                    }
+                }
+                Log.d(TAG, "useID: ${viewModel.userID}")
                 NavigateToHomeScreen()
             } else {
                 NavigateToVerifyEmailScreen()
