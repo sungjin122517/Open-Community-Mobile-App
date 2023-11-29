@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -27,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,7 +36,6 @@ import com.example.finalproject.components.PostCard
 import com.example.finalproject.models.Comment
 import com.example.finalproject.models.fetchComments
 import com.example.finalproject.models.fetchPost
-import com.example.finalproject.navigation.Graph
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.white
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -50,12 +47,12 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PostDetailsScreen(postID: Int, navController: NavController) {
+fun PostDetailsScreen(postID: String, navController: NavController) {
     // TODO: Obtain comments given post id
-
+    val context = LocalContext.current
     // States
     val (post, setPost) = remember {
-        mutableStateOf(fetchPost(postID))
+        mutableStateOf(fetchPost(postID, context))
     }
 
     val (comments, setComments) = remember {
@@ -74,7 +71,7 @@ fun PostDetailsScreen(postID: Int, navController: NavController) {
         isRefreshing = true
 
         // check weather post have new comments
-        val tmpPost = fetchPost(postID)
+        val tmpPost = fetchPost(postID, context)
         if (0 != commentCount) {
             setPost(tmpPost)
             setComments(fetchComments(0, 0))
@@ -162,7 +159,7 @@ fun PostDetailScreenPreview() {
             comments.add(Comment("Hi", Date(10)))
         }
 
-        PostDetailsScreen(0, navController = NavController(LocalContext.current))
+        PostDetailsScreen("TEST_POST_ID", navController = NavController(LocalContext.current))
     }
 }
 

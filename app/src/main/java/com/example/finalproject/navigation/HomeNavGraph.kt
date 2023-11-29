@@ -68,11 +68,11 @@ fun HomeNavGraph(
             CommunityScreen(navController)
         }
         composable(Graph.POST_DETAILS) {navBackStackEntry ->
-            val postID = navBackStackEntry.arguments?.getInt("postID")
+            val postID = navBackStackEntry.arguments?.getString("postID")
             if (postID != null) {
                 PostDetailsScreen(postID = postID, navController = navController)
             } else {
-                PostDetailsScreen(postID = 0, navController = navController)
+                PostDetailsScreen(postID = "TEST_POST_ID", navController = navController)
             }
         }
     }

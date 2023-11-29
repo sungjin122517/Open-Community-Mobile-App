@@ -1,5 +1,19 @@
 package com.example.finalproject.models
 
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.util.Log
+import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.finalproject.data.firestore.fetchData
+import com.example.finalproject.data.getUserID
+import com.example.finalproject.dataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.Date
 
 enum class PostCategory(val value: String, val description: String) {
@@ -15,7 +29,7 @@ data class PostStatus(
 )
 
 class Post(
-    val id: Int,
+    val id: String,
     val category: PostCategory,
     val title: String,
     val time: Date,
@@ -29,7 +43,13 @@ class Post(
     val status = PostStatus(viewCount, commentCount, saveCount,isSaved)
 }
 
-fun fetchPost(postID: Int): Post {
+fun fetchPost(postID: String, context: Context): Post {
+    // allow async fetching
+
+//    getUserID(context) {
+//        Log.d(TAG, "DocumentSnapshot data: $it")
+//    }
+    fetchData()
     return Post(
         postID,
         PostCategory.ACADEMIC,
@@ -42,4 +62,7 @@ fun fetchPost(postID: Int): Post {
         0,
         false,
     )
+
 }
+
+
