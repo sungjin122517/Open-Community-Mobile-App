@@ -1,11 +1,11 @@
-package com.example.finalproject.data
+package com.example.finalproject.data.service
 
 import com.example.finalproject.data.model.Response
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 
-interface AuthRepository {
+interface AuthService {
     val currentUser: FirebaseUser?
 //    suspend fun login(email: String, password: String): Resource<FirebaseUser>
 //    suspend fun signup(name: String, email: String, password: String): Resource<FirebaseUser>

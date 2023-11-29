@@ -1,8 +1,7 @@
-package com.example.finalproject.data
+package com.example.finalproject.data.service.impl
 
-import android.util.Log
+import com.example.finalproject.data.service.AuthService
 import com.example.finalproject.data.model.Response
-import com.example.finalproject.models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
@@ -15,9 +14,9 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthRepositoryImpl @Inject constructor(
+class AuthServiceImpl @Inject constructor(
     private val auth: FirebaseAuth,
-) : AuthRepository {
+) : AuthService {
     override val currentUser get() = auth.currentUser
 
     override suspend fun firebaseSignUpWithEmailAndPassword(

@@ -4,7 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.example.finalproject.models.Event
+import com.example.finalproject.data.model.Event
 
 class EventViewModel: ViewModel() {
     var event by mutableStateOf<Event?>(null)

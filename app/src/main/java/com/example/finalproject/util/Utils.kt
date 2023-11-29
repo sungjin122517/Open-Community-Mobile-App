@@ -1,4 +1,4 @@
-package com.example.finalproject.components
+package com.example.finalproject.util
 
 import android.content.ContentValues.TAG
 import android.content.Context

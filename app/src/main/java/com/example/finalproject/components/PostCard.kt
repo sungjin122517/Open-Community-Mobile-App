@@ -43,10 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.finalproject.ui.theme.FinalProjectTheme
-import com.example.finalproject.models.Post
-import com.example.finalproject.models.PostCategory
-import com.example.finalproject.models.PostStatus
-import com.example.finalproject.models.fetchPost
+import com.example.finalproject.data.model.Post
+import com.example.finalproject.data.model.PostCategory
+import com.example.finalproject.data.model.PostStatus
+import com.example.finalproject.data.model.fetchPost
 import com.example.finalproject.navigation.Graph
 
 import java.util.Date

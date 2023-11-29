@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.finalproject.data.AuthRepository
+import com.example.finalproject.data.service.AuthService
 import com.example.finalproject.data.model.Response
 import com.example.finalproject.data.model.Response.Success
 import com.example.finalproject.data.model.Response.Loading
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val repo: AuthRepository
+    private val repo: AuthService
 ): ViewModel() {
     var signUpResponse by mutableStateOf<Response<Boolean>>(Success(false))
         private set

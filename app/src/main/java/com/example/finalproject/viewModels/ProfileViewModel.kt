@@ -5,9 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.finalproject.data.AuthRepository
+import com.example.finalproject.data.service.AuthService
 import com.example.finalproject.data.model.Response
-import com.example.finalproject.data.model.Response.Failure
 import com.example.finalproject.data.model.Response.Success
 import com.example.finalproject.data.model.Response.Loading
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val repo: AuthRepository
+    private val repo: AuthService
 ): ViewModel() {
 //    var revokeAccessResponse by mutableStateOf<RevokeAccessResponse>(Success(false))
 //        private set

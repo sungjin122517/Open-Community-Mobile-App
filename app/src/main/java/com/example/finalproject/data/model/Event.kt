@@ -1,4 +1,4 @@
-package com.example.finalproject.models
+package com.example.finalproject.data.model
 
 import java.text.SimpleDateFormat
 import java.time.LocalDate

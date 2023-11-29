@@ -1,19 +1,7 @@
-package com.example.finalproject.models
+package com.example.finalproject.data.model
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
-import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.finalproject.data.firestore.fetchData
-import com.example.finalproject.data.getUserID
-import com.example.finalproject.dataStore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.Date
 
 enum class PostCategory(val value: String, val description: String) {

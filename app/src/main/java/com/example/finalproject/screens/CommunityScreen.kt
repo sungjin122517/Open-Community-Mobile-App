@@ -29,7 +29,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.components.PostCard
 import com.example.finalproject.dataStore
-import com.example.finalproject.models.fetchPost
+import com.example.finalproject.data.model.fetchPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh

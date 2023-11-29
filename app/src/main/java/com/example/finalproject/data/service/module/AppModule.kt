@@ -1,10 +1,8 @@
-package com.example.finalproject.di
+package com.example.finalproject.data.service.module
 
-import com.example.finalproject.data.AuthRepository
-import com.example.finalproject.data.AuthRepositoryImpl
-import com.google.firebase.auth.FirebaseAuth
+import com.example.finalproject.data.service.AuthService
+import com.example.finalproject.data.service.impl.AuthServiceImpl
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
@@ -15,7 +13,7 @@ import dagger.hilt.components.SingletonComponent
 @Module
 object AppModule {
     @Provides
-    fun provideAuthRepository(): AuthRepository = AuthRepositoryImpl(
+    fun provideAuthRepository(): AuthService = AuthServiceImpl(
         auth = Firebase.auth,
     )
 }

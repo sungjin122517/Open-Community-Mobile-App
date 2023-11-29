@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.finalproject.components.CommentSection
 import com.example.finalproject.components.PostCard
-import com.example.finalproject.models.Comment
-import com.example.finalproject.models.fetchComments
-import com.example.finalproject.models.fetchPost
+import com.example.finalproject.data.model.Comment
+import com.example.finalproject.data.model.fetchComments
+import com.example.finalproject.data.model.fetchPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.white
 import eu.bambooapps.material3.pullrefresh.pullRefresh
