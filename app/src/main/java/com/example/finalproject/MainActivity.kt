@@ -9,18 +9,24 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.data.USER_ID
-import com.example.finalproject.navigation.Graph
-import com.example.finalproject.navigation.RootNavigationGraph
+import com.example.finalproject.data.service.module.AppModule
+import com.example.finalproject.ui.navigation.Graph
+import com.example.finalproject.ui.navigation.RootNavigationGraph
 import com.example.finalproject.ui.theme.FinalProjectTheme
-import com.example.finalproject.viewModels.MainViewModel
+import com.example.finalproject.ui.viewModels.MainViewModel
+import com.example.finalproject.ui.viewModels.PostsViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 
 val Context.dataStore by preferencesDataStore(name = "setting")
@@ -34,6 +40,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+//            val postsVM = PostsViewModel(AppModule.provideStorageService())
+//            LaunchedEffect(postsVM) {
+//                val postList = postsVM.posts.onEach {
+//                    for( post in it) {
+//                        Log.d(TAG, "posts: $post")
+//                    }
+//                }
+//            }
             navController = rememberNavController()
             FinalProjectTheme(darkTheme = true) {
                 RootNavigationGraph(navController)
