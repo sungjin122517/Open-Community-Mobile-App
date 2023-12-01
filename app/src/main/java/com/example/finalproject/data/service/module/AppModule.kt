@@ -2,6 +2,7 @@ package com.example.finalproject.data.service.module
 
 import com.example.finalproject.data.service.AuthService
 import com.example.finalproject.data.service.PostsService
+import com.example.finalproject.data.service.UserService
 import com.example.finalproject.data.service.impl.AuthServiceImpl
 import com.example.finalproject.data.service.impl.PostsServiceImpl
 import com.google.firebase.auth.ktx.auth
@@ -22,9 +23,18 @@ object AppModule {
         auth = Firebase.auth,
     )
 
-    @Provides fun provideStorageService(): PostsService = PostsServiceImpl(
-        firestore = Firebase.firestore
+    @Provides
+    fun provideStorageService(): PostsService = PostsServiceImpl(
+        firestore = Firebase.firestore,
+        auth = AuthServiceImpl(
+            auth = Firebase.auth,
+        )
     )
+
+//    @Provides
+//    fun provideUserService(): UserService = UserService(
+//        firestore = Firebase.firestore
+//    )
 }
 
 //@Module

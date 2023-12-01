@@ -1,6 +1,8 @@
 package com.example.finalproject.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,9 +33,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.finalproject.data.model.User
 import com.example.finalproject.ui.components.PostCard
-import com.example.finalproject.dataStore
 import com.example.finalproject.data.model.fetchPost
+import com.example.finalproject.data.savedPostIDs
 import com.example.finalproject.data.service.module.AppModule
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.viewModels.PostsViewModel
@@ -61,9 +65,13 @@ fun CommunityScreen(navController: NavController) {
     *
     */
 //    val communityNavController = rememberNavController()
-    val view_model: PostsViewModel = hiltViewModel()
-    val posts = view_model.posts.collectAsStateWithLifecycle(initialValue = emptyList())
+    val context = LocalContext.current
+    val viewModel: PostsViewModel = hiltViewModel()
+    var posts = viewModel.posts.collectAsStateWithLifecycle(initialValue = emptyList())
+    viewModel.fetchAndStoreSavedPostIds(context)
+    Log.d(TAG, "Paco: render CommunityScreen")
 
+    val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
     Scaffold (
         topBar = {TopAppBar(title = {Text("Community")})}
     ) { it ->
@@ -81,16 +89,13 @@ fun CommunityScreen(navController: NavController) {
                 mutableStateOf(false)
             }
 
-            val (checkPostFeed, setCheckPostFeed) = remember {
-                mutableStateOf(checkPostFeed())
-            }
             val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
                 isRefreshing = true
-                setCheckPostFeed(!checkPostFeed)
+                viewModel.onRefresh()
                 isRefreshing = false
             })
 
-            if (checkPostFeed) {
+            if (posts.value.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier
                         //                    .padding(it)
@@ -102,10 +107,11 @@ fun CommunityScreen(navController: NavController) {
                         PostCard(
                             Modifier,
                             post = post,
-                            navController
+                            navController,
+                            viewModel::onSaveClicked,
+                            post.id in user.value!!.savedPostIds
                         )
                     }
-
                 }
             }else {
                 LazyColumn(
@@ -132,9 +138,9 @@ fun CommunityScreen(navController: NavController) {
    }
 }
 
-fun checkPostFeed(): Boolean {
-    return true
-}
+//fun checkPostFeed(): Boolean {
+//    return true
+//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

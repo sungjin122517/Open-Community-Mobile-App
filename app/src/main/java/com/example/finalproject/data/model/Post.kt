@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.finalproject.data.firestore.fetchData
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.DocumentReference
 import java.util.Date
 
 enum class PostCategory(val value: String, val description: String) {
@@ -12,10 +13,10 @@ enum class PostCategory(val value: String, val description: String) {
 }
 
 data class PostStatus(
-    val viewCount: Int,
-    val commentCount: Int,
-    var saveCount: Int,
-    var isSaved: Boolean,
+    val viewCount: Int = 0,
+    val commentCount: Int = 0,
+    var saveCount: Int = 0,
+    var isSaved: Boolean = false,
 )
 
 //class Post(
@@ -33,7 +34,7 @@ data class PostStatus(
 //    val status = PostStatus(viewCount, commentCount, saveCount,isSaved)
 //}
 
-class Post(
+data class Post(
     @DocumentId val id: String = "",
     val category: String = "Academic",
     val title: String = "",
@@ -41,12 +42,13 @@ class Post(
     val writerId: String = "",         // should be another class User
     val content: String = "",
     val deleted: Boolean = false,
-    private val viewCount: Int = 0,
-    private val commentCount: Int = 0,
-    private val saveCount: Int = 0,
-    private val isSaved: Boolean = false,
+    val viewCount: Int = 0,
+    val commentCount: Int = 0,
+    var saveCount: Int = 0,
+    val reportCount: Int = 0,
+    var isSaved: Boolean = false,
 ) {
-    val status = PostStatus(viewCount, commentCount, saveCount, isSaved)
+//    var status = PostStatus(viewCount, commentCount, saveCount, isSaved)
 }
 
 fun fetchPost(postID: String, context: Context): Post {

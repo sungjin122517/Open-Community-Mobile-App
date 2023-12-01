@@ -18,7 +18,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.data.USER_ID
+import com.example.finalproject.data.savedPostIDs
 import com.example.finalproject.data.service.module.AppModule
+import com.example.finalproject.data.userPreferences
 import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.navigation.RootNavigationGraph
 import com.example.finalproject.ui.theme.FinalProjectTheme
@@ -29,7 +31,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 
-val Context.dataStore by preferencesDataStore(name = "setting")
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -38,8 +39,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
+
 //            val postsVM = PostsViewModel(AppModule.provideStorageService())
 //            LaunchedEffect(postsVM) {
 //                val postList = postsVM.posts.onEach {
@@ -68,8 +69,8 @@ class MainActivity : ComponentActivity() {
                 val userID = viewModel.userID
 
                 runBlocking {
-                    applicationContext.dataStore.edit { settings ->
-                        settings[USER_ID] = userID
+                    applicationContext.userPreferences.edit { preferences ->
+                        preferences[USER_ID] = userID
                     }
                 }
                 Log.d(TAG, "useID: ${viewModel.userID}")

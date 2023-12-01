@@ -56,11 +56,11 @@ fun PostDetailsScreen(postID: String, navController: NavController) {
     }
 
     val (comments, setComments) = remember {
-        mutableStateOf(fetchComments(0, post.status.commentCount))
+        mutableStateOf(fetchComments(0, post.commentCount))
     }
 
     val (commentCount, setCommentCount) = remember {
-        mutableIntStateOf(post.status.commentCount)
+        mutableIntStateOf(post.commentCount)
     }
 
     var isRefreshing by remember {
@@ -96,7 +96,7 @@ fun PostDetailsScreen(postID: String, navController: NavController) {
                     .height(1.dp)
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)
             )
-            PostCard(Modifier, post, navController)
+            PostCard(Modifier, post, navController, {c, p, d -> null}, false)
             Spacer(     // horizontal divisor
                 modifier = Modifier
                     .fillMaxWidth()

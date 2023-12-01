@@ -1,6 +1,10 @@
 package com.example.finalproject.ui.components
 
 //import android.content.Context
+import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -41,25 +45,39 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.datastore.preferences.core.edit
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.finalproject.data.USER_ID
+//import com.example.finalproject.data.checkSavedPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.model.PostStatus
 import com.example.finalproject.data.model.fetchPost
+import com.example.finalproject.data.savedPostIDs
 import com.example.finalproject.ui.navigation.Graph
+import kotlinx.coroutines.flow.collect
 import java.text.SimpleDateFormat
 
 import java.util.Date
 
 val DEFAULT_DATE = Date(0)
 
+@SuppressLint("SimpleDateFormat")
 val dateFormatter = SimpleDateFormat("dd/MM/yyyy HH:mm")
 
+@SuppressLint("SimpleDateFormat")
 val minutesFormatter = SimpleDateFormat("m")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostCard(modifier: Modifier, post: Post, navController: NavController) {
+fun PostCard(
+    modifier: Modifier,
+    post: Post,
+    navController: NavController,
+    onSaveClicked: (Context, Post, Boolean) -> Unit,
+    isSaved: Boolean
+) {
     Column {
 
         // Define the layout and style of the card
@@ -101,8 +119,7 @@ fun PostCard(modifier: Modifier, post: Post, navController: NavController) {
                         .padding(bottom = 8.dp)
                         .fillMaxWidth()
                 )
-
-                PostCardStatus(post.status)
+                PostCardStatus(post, isSaved, onSaveClicked)
 
             }
         }
@@ -149,23 +166,11 @@ fun PostCardHeader(category: String, date: Date, navController: NavController) {
 }
 
 @Composable
-fun PostCardStatus(status: PostStatus) {
-    val (saveCount, setSaveCount) = remember {
-        mutableStateOf(status.saveCount)
-    }
-
-    fun saveHandler() {
-        if (status.isSaved) {
-            // unsaved
-            setSaveCount(saveCount-1)
-            status.isSaved = false
-        } else {
-            setSaveCount(saveCount+1)
-            status.isSaved = true
-            // update local db
-        }
-        // update post
-    }
+fun PostCardStatus(
+    post: Post, isSaved: Boolean,
+    onSaveClicked: (Context, Post, Boolean) -> Unit
+) {
+    val context = LocalContext.current
 
     // Display the post stats
     Row(
@@ -185,7 +190,7 @@ fun PostCardStatus(status: PostStatus) {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = status.viewCount.toString(),
+                text = post.viewCount.toString(),
                 fontSize = 16.sp
             )
         }
@@ -197,33 +202,27 @@ fun PostCardStatus(status: PostStatus) {
                 imageVector = Icons.Default.Comment,
                 contentDescription = "Comments"
             )
-//            Text(
-//                text = "Comments",
-//                fontSize = 14.sp
-//            )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = status.commentCount.toString(),
+                text = post.commentCount.toString(),
                 fontSize = 16.sp
             )
         }
         // Display the number of shares
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable(onClick = {saveHandler()})
+            modifier = Modifier.clickable(onClick = {
+                Log.d(TAG, "Paco: Click Saved")
+                onSaveClicked(context, post, isSaved)
+            })
         ) {
-//                    Icon(
-//                        imageVector = Icons.Default.Share,
-//                        contentDescription = "Shares",
-//                        tint = Color.Green
-//                    )
             Icon(
-                imageVector = if (status.isSaved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                imageVector = if (isSaved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
                 contentDescription = "Comments"
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = saveCount.toString(),
+                text = post.saveCount.toString(),
                 fontSize = 16.sp
             )
 
@@ -269,7 +268,23 @@ fun PostCardPreview() {
     FinalProjectTheme(darkTheme = true) {
         val post = fetchPost("TEST_POST_ID", LocalContext.current)
 
-        PostCard(modifier = Modifier, post, NavController(LocalContext.current))
+        PostCard(modifier = Modifier, post, NavController(LocalContext.current),{ c, post, d -> null }, false
+        )
+
     }
 //    }
 }
+fun saveHandler(post: Post) {
+        if (post.isSaved) {
+            // unsaved
+//            setSaveCount(saveCount-1)
+            post.saveCount -= 1
+            post.isSaved = false
+        } else {
+//            setSaveCount(saveCount+1)
+            post.saveCount += 1
+            post.isSaved = true
+            // update local db
+        }
+        // update post
+    }
