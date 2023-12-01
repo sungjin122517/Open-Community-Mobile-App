@@ -59,7 +59,7 @@ fun CommentSectionPreview() {
     FinalProjectTheme(darkTheme = true) {
         val comments = mutableListOf<Comment>()
         for (i in 1..5) {
-            comments.add(Comment("Hi", Date(10)))
+            comments.add(Comment("Hi", ))
         }
         Surface {
             CommentSection(comments = comments.toTypedArray(), modifier = Modifier)

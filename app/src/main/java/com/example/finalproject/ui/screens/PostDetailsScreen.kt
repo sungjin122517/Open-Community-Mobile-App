@@ -63,9 +63,10 @@ fun PostDetailsScreen(
     Log.d(TAG, "Paco: rendering post Detail: $postID")
     // TODO: Obtain comments given post id
     val context = LocalContext.current
+    val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
 
     var post = viewModel.fetchPost(postID).collectAsStateWithLifecycle(initialValue = Post())
-    val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+    var comments = viewModel.fetchComments(postID).collectAsStateWithLifecycle(initialValue = listOf<Comment>())
 
     Log.d(TAG, "postView fetched: $post")
 //    Log.d(TAG, "postView isSaved: ${postView.isSaved}")
@@ -77,13 +78,13 @@ fun PostDetailsScreen(
 //        mutableStateOf(fetchPost(postID, context))
 //    }
 
-    val (comments, setComments) = remember {
-        mutableStateOf(fetchComments(0, post.value?.commentCount ?: 0))
-    }
+//    val (comments, setComments) = remember {
+//        mutableStateOf(fetchComments(0, post.value?.commentCount ?: 0))
+//    }
 
-    val (commentCount, setCommentCount) = remember {
-        mutableIntStateOf(post.value?.commentCount ?:0)
-    }
+//    val (commentCount, setCommentCount) = remember {
+//        mutableIntStateOf(post.value?.commentCount ?:0)
+//    }
 
     var isRefreshing by remember {
         mutableStateOf(false)
@@ -93,11 +94,11 @@ fun PostDetailsScreen(
         isRefreshing = true
 
         // check weather post have new comments
-        val tmpPost = fetchPost(postID, context)
-        if (0 != commentCount) {
-//            setPost(tmpPost)
-            setComments(fetchComments(0, 0))
-        }
+//        val tmpPost = fetchPost(postID, context)
+//        if (0 != commentCount) {
+////            setPost(tmpPost)
+//            setComments(fetchComments(0, 0))
+//        }
 
         isRefreshing = false
     })
@@ -136,7 +137,7 @@ fun PostDetailsScreen(
                     .height(1.dp)
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)
             )
-            CommentSection(comments, modifier = Modifier
+            CommentSection(comments.value.toTypedArray(), modifier = Modifier
                 .pullRefresh(state))
 //            Text("Something went wrong.")
 //            Text("Please try again.")
@@ -183,7 +184,7 @@ fun PostDetailScreenPreview() {
     FinalProjectTheme(darkTheme = true) {
         val comments = mutableListOf<Comment>()
         for (i in 1..5) {
-            comments.add(Comment("Hi", Date(10)))
+            comments.add(Comment())
         }
 
 //        PostDetailsScreen("TEST_POST_ID", navController = NavController(LocalContext.current))

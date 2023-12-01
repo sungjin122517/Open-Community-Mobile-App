@@ -1,5 +1,6 @@
 package com.example.finalproject.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,9 +23,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.finalproject.data.model.Comment
 import com.example.finalproject.ui.theme.FinalProjectTheme
+import java.text.SimpleDateFormat
 import java.util.Date
 
 
+//val dateFormatter = SimpleDateFormat("dd/MM/yyyy HH:mm")
 @Composable
 fun CommentCard(comment: Comment) {
     Column(modifier = Modifier
@@ -51,7 +54,7 @@ fun CommentCard(comment: Comment) {
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        comment.createTime.toString(),
+                        dateFormatter.format(comment.time.toDate()),
                         color = Color.Gray,
                         fontSize = 14.sp
                     )
@@ -77,6 +80,6 @@ fun CommentCard(comment: Comment) {
 @Composable
 fun CommentCardPreview() {
     FinalProjectTheme(darkTheme = true) {
-        CommentCard(Comment(content = "HI", createTime = Date(10)))
+        CommentCard(Comment(content = "HI"))
     }
 }

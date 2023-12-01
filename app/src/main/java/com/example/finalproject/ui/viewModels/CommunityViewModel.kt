@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.finalproject.data.model.Comment
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.savedPostIDs
 import com.example.finalproject.data.service.CommunityService
@@ -34,13 +35,10 @@ class CommunityViewModel @Inject constructor(
 
     fun fetchPost(postId: String): Flow<Post?> {
         return service.getPost(postId)
-//        val post = mutableStateOf(Post())
-//        if (postId != null) {
-//            viewModelScope.launch {
-//                post.value =  service.getPost(postId) ?: post.value
-//            }
-//        }
-//        return post
+    }
+
+    fun fetchComments(postId: String): Flow<List<Comment>> {
+        return service.getPostComment(postId)
     }
 
 

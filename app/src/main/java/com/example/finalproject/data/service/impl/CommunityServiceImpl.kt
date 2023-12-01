@@ -4,6 +4,7 @@ package com.example.finalproject.data.service.impl
 import android.content.ContentValues
 import android.util.Log
 import androidx.tracing.Trace
+import com.example.finalproject.data.model.Comment
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.model.PostStatus
 import com.example.finalproject.data.model.User
@@ -46,6 +47,12 @@ class CommunityServiceImpl @Inject constructor(
         return firestore.collection(POST_STATUS_COLLECTION).document(postId).dataObjects<PostStatus>()
     }
 
+    override fun getPostComment(postId: String): Flow<List<Comment>> {
+        Log.d(ContentValues.TAG, "Paco: get post status")
+        return firestore.collection(POST_COLLECTION).document(postId)
+            .collection(COMMENT_COLLECTION).dataObjects<Comment>()
+    }
+
 //    suspend fun getSavedPostId(postId: String): List<String>{
 //        return userc
 //    }
@@ -77,6 +84,7 @@ class CommunityServiceImpl @Inject constructor(
         private const val USER_ID_FIELD = "userId"
         private const val USER_COLLECTION = "users"
         private const val POST_COLLECTION = "posts"
+        private const val COMMENT_COLLECTION = "comments"
         private const val POST_STATUS_COLLECTION = "postsStatus"
 //        private const val SAVE_TASK_TRACE = "saveTask"
         private const val UPDATE_POST_TRACE = "updatePost"
