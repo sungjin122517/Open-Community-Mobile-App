@@ -75,8 +75,9 @@ fun PostCard(
     modifier: Modifier,
     post: Post,
     navController: NavController,
+    isSaved: Boolean,
     onSaveClicked: (Context, Post, Boolean) -> Unit,
-    isSaved: Boolean
+    openPostDetailScreen: (String) -> Unit
 ) {
     Column {
 
@@ -88,7 +89,8 @@ fun PostCard(
     //            defaultElevation = 8.dp
     //        ),
             onClick = {
-                navController.navigate("post_detail/0")
+//                navController.navigate("post_detail/0")
+                openPostDetailScreen(post.id)
             },
             shape = RectangleShape,
             colors = CardDefaults.cardColors(
@@ -268,7 +270,7 @@ fun PostCardPreview() {
     FinalProjectTheme(darkTheme = true) {
         val post = fetchPost("TEST_POST_ID", LocalContext.current)
 
-        PostCard(modifier = Modifier, post, NavController(LocalContext.current),{ c, post, d -> null }, false
+        PostCard(modifier = Modifier, post, NavController(LocalContext.current), false,{ c, post, d -> null }, {s ->}
         )
 
     }

@@ -3,28 +3,25 @@ package com.example.finalproject.data.service.impl
 //import com.example.finalproject.data.model.Post
 import android.content.ContentValues
 import android.util.Log
-import androidx.core.os.trace
 import androidx.tracing.Trace
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.model.PostStatus
 import com.example.finalproject.data.model.User
 import com.example.finalproject.data.service.AuthService
-import com.example.finalproject.data.service.PostsService
+import com.example.finalproject.data.service.CommunityService
 import com.example.finalproject.data.utils.await
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.dataObjects
-import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.snapshots
+import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PostsServiceImpl @Inject constructor(
+class CommunityServiceImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val auth: AuthService,
-): PostsService {
+): CommunityService {
     override val posts: Flow<List<Post>>
         get() {
             Log.d(ContentValues.TAG, "Paco: fetch posts")
@@ -33,12 +30,16 @@ class PostsServiceImpl @Inject constructor(
 
     override val user: Flow<User?>
         get() = firestore.collection(USER_COLLECTION).document(auth.currentUser?.uid!!).dataObjects<User>()
+
+    override fun getPost(postId: String): Flow<Post?> =
+        firestore.collection(POST_COLLECTION).document(postId).dataObjects<Post>()
+
 //    override val getSavedPostId: Flow<List<String>>
 //        get() = firestore.collection(USER_COLLECTION).document(auth.currentUser?.uid!!).get("saved")
 
-    override suspend fun getPost(postId: String): Flow<Post?> {
-        return firestore.collection(POST_COLLECTION).document(postId).dataObjects<Post>()
-    }
+//    override suspend fun getPost(postId: String): Post? =
+//        firestore.collection(POST_COLLECTION).document(postId).get().await().toObject()
+
 
     override suspend fun getPostStatus(postId: String): Flow<PostStatus?> {
         Log.d(ContentValues.TAG, "Paco: get post status")

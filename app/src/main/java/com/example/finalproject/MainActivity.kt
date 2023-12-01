@@ -2,33 +2,24 @@ package com.example.finalproject
 
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.data.USER_ID
-import com.example.finalproject.data.savedPostIDs
-import com.example.finalproject.data.service.module.AppModule
 import com.example.finalproject.data.userPreferences
 import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.navigation.RootNavigationGraph
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.viewModels.MainViewModel
-import com.example.finalproject.ui.viewModels.PostsViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 
 

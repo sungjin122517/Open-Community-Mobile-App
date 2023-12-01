@@ -1,12 +1,8 @@
 package com.example.finalproject.ui.test
 
-import android.content.ContentValues
 import android.content.Context
 import android.os.Build.VERSION_CODES.Q
-import android.util.Log
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,33 +17,24 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.example.finalproject.data.model.Post
-import com.example.finalproject.data.model.fetchPost
-import com.example.finalproject.data.service.impl.PostsServiceImpl
 import com.example.finalproject.data.service.module.AppModule
-import com.example.finalproject.ui.components.PostCard
 import com.example.finalproject.ui.screens.checkPostFeed
-import com.example.finalproject.ui.viewModels.MainViewModel
-import com.example.finalproject.ui.viewModels.PostsViewModel
+import com.example.finalproject.ui.viewModels.CommunityViewModel
 import com.google.firebase.FirebaseApp
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -56,16 +43,15 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.mock
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [Q])
-class PostsViewModelTest {
+class CommunityViewModelTest {
     init {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext())
     }
-    private val viewModel = PostsViewModel(AppModule.provideStorageService())
+    private val viewModel = CommunityViewModel(AppModule.provideStorageService())
 
     @get:Rule
     val composeTestRule = createComposeRule()
@@ -89,7 +75,7 @@ class PostsViewModelTest {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostsViewModelTESTUI(viewModel: PostsViewModel) {
+fun PostsViewModelTESTUI(viewModel: CommunityViewModel) {
     val navController = rememberNavController()
     val postList = viewModel.posts.collectAsStateWithLifecycle(initialValue = emptyList<Post>())
 
@@ -110,12 +96,12 @@ fun PostsViewModelTESTUI(viewModel: PostsViewModel) {
                 mutableStateOf(false)
             }
 
-            val (checkPostFeed, setCheckPostFeed) = remember {
-                mutableStateOf(checkPostFeed())
-            }
+//            val (checkPostFeed, setCheckPostFeed) = remember {
+//                mutableStateOf(checkPostFeed())
+//            }
             val state = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = {
                 isRefreshing = true
-                setCheckPostFeed(!checkPostFeed)
+//                setCheckPostFeed(!checkPostFeed)
                 isRefreshing = false
             })
 

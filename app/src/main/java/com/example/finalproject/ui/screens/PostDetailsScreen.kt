@@ -2,6 +2,9 @@ package com.example.finalproject.ui.screens
 
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,14 +33,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.finalproject.ui.components.CommentSection
 import com.example.finalproject.ui.components.PostCard
 import com.example.finalproject.data.model.Comment
+import com.example.finalproject.data.model.Post
+import com.example.finalproject.data.model.User
 import com.example.finalproject.data.model.fetchComments
 import com.example.finalproject.data.model.fetchPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.white
+import com.example.finalproject.ui.viewModels.CommunityViewModel
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import java.util.Date
@@ -47,20 +55,34 @@ import java.util.Date
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun PostDetailsScreen(postID: String, navController: NavController) {
+fun PostDetailsScreen(
+    postID: String,
+    navController: NavController,
+    viewModel: CommunityViewModel = hiltViewModel()
+) {
+    Log.d(TAG, "Paco: rendering post Detail: $postID")
     // TODO: Obtain comments given post id
     val context = LocalContext.current
+
+    var post = viewModel.fetchPost(postID).collectAsStateWithLifecycle(initialValue = Post())
+    val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+
+    Log.d(TAG, "postView fetched: $post")
+//    Log.d(TAG, "postView isSaved: ${postView.isSaved}")
+
+//    val post = viewModel.getPost(postID).collectAsStateWithLifecycle(initialValue = Post())
+    
     // States
-    val (post, setPost) = remember {
-        mutableStateOf(fetchPost(postID, context))
-    }
+//    val (post, setPost) = remember {
+//        mutableStateOf(fetchPost(postID, context))
+//    }
 
     val (comments, setComments) = remember {
-        mutableStateOf(fetchComments(0, post.commentCount))
+        mutableStateOf(fetchComments(0, post.value?.commentCount ?: 0))
     }
 
     val (commentCount, setCommentCount) = remember {
-        mutableIntStateOf(post.commentCount)
+        mutableIntStateOf(post.value?.commentCount ?:0)
     }
 
     var isRefreshing by remember {
@@ -73,7 +95,7 @@ fun PostDetailsScreen(postID: String, navController: NavController) {
         // check weather post have new comments
         val tmpPost = fetchPost(postID, context)
         if (0 != commentCount) {
-            setPost(tmpPost)
+//            setPost(tmpPost)
             setComments(fetchComments(0, 0))
         }
 
@@ -96,7 +118,12 @@ fun PostDetailsScreen(postID: String, navController: NavController) {
                     .height(1.dp)
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)
             )
-            PostCard(Modifier, post, navController, {c, p, d -> null}, false)
+            PostCard(Modifier, post.value?: Post(), navController, post.value?.id in user.value!!.savedPostIds, {
+                context, post_id, b ->
+                    viewModel.onSaveClicked(context, post_id, b)
+//                    post = viewModel.fetchPost(postID)
+                Log.d(TAG, "Paco: update saveCount: ${post.value?.saveCount}")
+            }, {s ->})
             Spacer(     // horizontal divisor
                 modifier = Modifier
                     .fillMaxWidth()
@@ -159,7 +186,7 @@ fun PostDetailScreenPreview() {
             comments.add(Comment("Hi", Date(10)))
         }
 
-        PostDetailsScreen("TEST_POST_ID", navController = NavController(LocalContext.current))
+//        PostDetailsScreen("TEST_POST_ID", navController = NavController(LocalContext.current))
     }
 }
 

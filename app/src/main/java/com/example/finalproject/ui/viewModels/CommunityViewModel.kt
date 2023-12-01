@@ -1,47 +1,47 @@
 package com.example.finalproject.ui.viewModels
 
-import android.content.ContentValues
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import com.example.finalproject.data.USER_ID
-import com.example.finalproject.data.getSavedPost
 import com.example.finalproject.data.model.Post
-import com.example.finalproject.data.model.PostStatus
-import com.example.finalproject.data.removeSavedPostId
 import com.example.finalproject.data.savedPostIDs
-import com.example.finalproject.data.service.AuthService
-import com.example.finalproject.data.service.PostsService
-import com.example.finalproject.data.service.impl.PostsServiceImpl
-import com.example.finalproject.data.storeSavedPostId
+import com.example.finalproject.data.service.CommunityService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PostsViewModel @Inject constructor(
-    private val service: PostsService
+class CommunityViewModel @Inject constructor(
+    private val state: SavedStateHandle,
+    private val service: CommunityService
 ): ViewModel() {
     var posts = service.posts
-
     var user = service.user
+//    var post: Flow<Post?> get() = viewModelScope.launch {
+//        service.getPost()
+//    }
+
 
     var savedPOstIds = hashSetOf<String>()
+
+    fun fetchPost(postId: String): Flow<Post?> {
+        return service.getPost(postId)
+//        val post = mutableStateOf(Post())
+//        if (postId != null) {
+//            viewModelScope.launch {
+//                post.value =  service.getPost(postId) ?: post.value
+//            }
+//        }
+//        return post
+    }
 
 
     fun updateSaveCount(postId: String, newSaveCount: Int) {
@@ -51,6 +51,7 @@ class PostsViewModel @Inject constructor(
         viewModelScope.launch() {
             service.updatePostField(postId, updateMap)
         }
+        Log.d(TAG, "Paco: newSaveCount: $newSaveCount")
     }
 
     suspend fun updateSavePostIds() {
@@ -59,6 +60,11 @@ class PostsViewModel @Inject constructor(
             "savedPostIds" to savedPOstIds.toList(),
         )
         service.updateUserField(updateMap)
+    }
+
+    fun onPostClicked(postId: String, openPostDetailScreen: (String) -> Unit) {
+        state["post_id"] = postId
+        openPostDetailScreen(postId)
     }
 
     fun onSaveClicked(context: Context, post: Post, isSaved: Boolean) {
@@ -81,7 +87,9 @@ class PostsViewModel @Inject constructor(
 
 
 
+    @SuppressLint("CommitPrefEdits")
     fun fetchAndStoreSavedPostIds(context: Context) {
+        val sharedPref = context.getSharedPreferences("sharedPref", Context.MODE_PRIVATE)
         Log.d(TAG, "Paco: fetchAndStoreSavedPostIds")
         viewModelScope.launch() {
             context.savedPostIDs.edit { it.clear() }
@@ -97,6 +105,9 @@ class PostsViewModel @Inject constructor(
                 }
                 Log.d(TAG, "Paco: fetch and store: ${savedPOstIds.toList()}")
             }
+//            sharedPref.edit()
+//                .putStringSet("savedPostIds", savedPOstIds)
+//                .apply()
         }
     }
 }

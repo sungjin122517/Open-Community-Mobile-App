@@ -1,13 +1,10 @@
 package com.example.finalproject.data.service.module
 
 import com.example.finalproject.data.service.AuthService
-import com.example.finalproject.data.service.PostsService
-import com.example.finalproject.data.service.UserService
+import com.example.finalproject.data.service.CommunityService
 import com.example.finalproject.data.service.impl.AuthServiceImpl
-import com.example.finalproject.data.service.impl.PostsServiceImpl
+import com.example.finalproject.data.service.impl.CommunityServiceImpl
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.Module
@@ -24,7 +21,7 @@ object AppModule {
     )
 
     @Provides
-    fun provideStorageService(): PostsService = PostsServiceImpl(
+    fun provideStorageService(): CommunityService = CommunityServiceImpl(
         firestore = Firebase.firestore,
         auth = AuthServiceImpl(
             auth = Firebase.auth,
@@ -32,8 +29,11 @@ object AppModule {
     )
 
 //    @Provides
-//    fun provideUserService(): UserService = UserService(
-//        firestore = Firebase.firestore
+//    fun providePostService(): PostService = PostServiceImpl(
+//        Firebase.firestore,
+//        auth = AuthServiceImpl(
+//            auth = Firebase.auth,
+//        ),
 //    )
 }
 

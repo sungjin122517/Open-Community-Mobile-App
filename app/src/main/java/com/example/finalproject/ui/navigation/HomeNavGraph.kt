@@ -1,6 +1,8 @@
 package com.example.finalproject.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,6 +15,7 @@ import com.example.finalproject.ui.screens.PostDetailsScreen
 import com.example.finalproject.ui.screens.ProfileScreen
 import com.example.finalproject.ui.screens.ReportScreen
 import com.example.finalproject.ui.viewModels.EventViewModel
+import com.example.finalproject.ui.viewModels.CommunityViewModel
 
 @Composable
 fun HomeNavGraph(
@@ -20,6 +23,8 @@ fun HomeNavGraph(
 ) {
 
     val eventViewModel: EventViewModel = viewModel()
+    val communityViewModel: CommunityViewModel = hiltViewModel()
+    communityViewModel.fetchAndStoreSavedPostIds(LocalContext.current)
 
     NavHost(
         navController = navController,
@@ -54,14 +59,18 @@ fun HomeNavGraph(
         }
 //        postNavGraph(navController)
         composable(BottomBarScreen.Post.route) {
-            CommunityScreen(navController)
+            CommunityScreen(navController, communityViewModel) { postId ->
+                navController.navigate("post_detail/$postId")
+            }
         }
         composable(Graph.POST_DETAILS) { navBackStackEntry ->
             val postID = navBackStackEntry.arguments?.getString("postID")
             if (postID != null) {
-                PostDetailsScreen(postID = postID, navController = navController)
+                PostDetailsScreen(postID = postID, navController = navController, communityViewModel)
             } else {
-                PostDetailsScreen(postID = "TEST_POST_ID", navController = navController)
+                CommunityScreen(navController, communityViewModel){ postId ->
+                    navController.navigate("post_detail/$postId")
+                }
             }
         }
     }

@@ -19,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +34,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.data.model.User
 import com.example.finalproject.ui.components.PostCard
-import com.example.finalproject.data.model.fetchPost
-import com.example.finalproject.data.savedPostIDs
-import com.example.finalproject.data.service.module.AppModule
 import com.example.finalproject.ui.theme.FinalProjectTheme
-import com.example.finalproject.ui.viewModels.PostsViewModel
+import com.example.finalproject.ui.viewModels.CommunityViewModel
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
@@ -47,7 +43,7 @@ import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CommunityScreen(navController: NavController) {
+fun CommunityScreen(navController: NavController, viewModel: CommunityViewModel = hiltViewModel(), openPostDetailScreen: (String) -> Unit) {
     /*
     * Features:
     *   1. View PostFeed
@@ -64,14 +60,12 @@ fun CommunityScreen(navController: NavController) {
     *   4. Create new post with button
     *
     */
-//    val communityNavController = rememberNavController()
-    val context = LocalContext.current
-    val viewModel: PostsViewModel = hiltViewModel()
-    var posts = viewModel.posts.collectAsStateWithLifecycle(initialValue = emptyList())
-    viewModel.fetchAndStoreSavedPostIds(context)
     Log.d(TAG, "Paco: render CommunityScreen")
 
+    val context = LocalContext.current
+    var posts = viewModel.posts.collectAsStateWithLifecycle(initialValue = emptyList())
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+
     Scaffold (
         topBar = {TopAppBar(title = {Text("Community")})}
     ) { it ->
@@ -108,8 +102,9 @@ fun CommunityScreen(navController: NavController) {
                             Modifier,
                             post = post,
                             navController,
+                            post.id in user.value!!.savedPostIds,
                             viewModel::onSaveClicked,
-                            post.id in user.value!!.savedPostIds
+                            openPostDetailScreen
                         )
                     }
                 }
@@ -164,7 +159,7 @@ fun CommunityScreenPreview() {
                         .fillMaxSize()
                         .padding(padding)
                 ){
-                    CommunityScreen(navController)
+                    CommunityScreen(navController, openPostDetailScreen = {s ->  })
 //                    val navBackStackEntry by navController.currentBackStackEntryAsState()
 //                    val currentDestination = navBackStackEntry?.destination
 //

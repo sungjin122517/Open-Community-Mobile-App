@@ -25,7 +25,7 @@ val Context.userPreferences by preferencesDataStore(name = "userPreferences")
 val Context.savedPostIDs by preferencesDataStore(name = "savedPostIDs")
 
 val USER_ID = stringPreferencesKey("userID")
-//val SAVED_POST = PreferencesKey
+//val SAVED_POST = Preferences.Key
 
 fun getUserID(context: Context, callback: (String?) -> Unit) {
     CoroutineScope(Dispatchers.Main).launch {
