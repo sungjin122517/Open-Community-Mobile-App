@@ -13,7 +13,6 @@ import com.example.finalproject.data.service.CommunityService
 import com.example.finalproject.data.utils.await
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.dataObjects
-import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -35,13 +34,6 @@ class CommunityServiceImpl @Inject constructor(
     override fun getPost(postId: String): Flow<Post?> =
         firestore.collection(POST_COLLECTION).document(postId).dataObjects<Post>()
 
-//    override val getSavedPostId: Flow<List<String>>
-//        get() = firestore.collection(USER_COLLECTION).document(auth.currentUser?.uid!!).get("saved")
-
-//    override suspend fun getPost(postId: String): Post? =
-//        firestore.collection(POST_COLLECTION).document(postId).get().await().toObject()
-
-
     override suspend fun getPostStatus(postId: String): Flow<PostStatus?> {
         Log.d(ContentValues.TAG, "Paco: get post status")
         return firestore.collection(POST_STATUS_COLLECTION).document(postId).dataObjects<PostStatus>()
@@ -57,14 +49,11 @@ class CommunityServiceImpl @Inject constructor(
 //        return userc
 //    }
 
-    override suspend fun save(post: Post): String {
-        TODO("Not yet implemented")
-    }
+//    override val getSavedPostId: Flow<List<String>>
+//        get() = firestore.collection(USER_COLLECTION).document(auth.currentUser?.uid!!).get("saved")
 
-    override suspend fun update(post: Post) {
-        TODO("Not yet implemented")
-    }
-
+//    override suspend fun getPost(postId: String): Post? =
+//        firestore.collection(POST_COLLECTION).document(postId).get().await().toObject()
 
     override suspend fun updatePostField(postId: String, updateMap: Map<String, Any>) {
         Trace.beginSection(UPDATE_POST_TRACE)
@@ -85,6 +74,8 @@ class CommunityServiceImpl @Inject constructor(
         private const val USER_COLLECTION = "users"
         private const val POST_COLLECTION = "posts"
         private const val COMMENT_COLLECTION = "comments"
+        private const val EVENT_COLLECTION = "events"
+        private const val EVENT_IS_EXPIRED = "isExpired"
         private const val POST_STATUS_COLLECTION = "postsStatus"
 //        private const val SAVE_TASK_TRACE = "saveTask"
         private const val UPDATE_POST_TRACE = "updatePost"

@@ -3,7 +3,9 @@ package com.example.finalproject.ui.viewModels
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.preferences.core.edit
@@ -14,9 +16,12 @@ import com.example.finalproject.data.model.Comment
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.savedPostIDs
 import com.example.finalproject.data.service.CommunityService
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -108,6 +113,16 @@ class CommunityViewModel @Inject constructor(
 //                .apply()
         }
     }
+
+//    fun fetchEvents(date: Timestamp = Timestamp.now()) {
+//        Log.d(TAG, "Paco: today is $date")
+//        viewModelScope.launch {
+//            val events = service.getEvents(date)
+//            Log.d(TAG, "Paco: events = $events")
+//
+//        }
+//    }
+
 }
 
 //@Module

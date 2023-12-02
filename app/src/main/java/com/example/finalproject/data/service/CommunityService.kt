@@ -16,8 +16,6 @@ interface CommunityService {
     fun getPost(postId: String): Flow<Post?>
     suspend fun getPostStatus(postId: String): Flow<PostStatus?>
     fun getPostComment(postId: String): Flow<List<Comment>>
-    suspend fun save(post: Post): String
-    suspend fun update(post: Post)
     suspend fun updatePostField(postId: String, updateMap: Map<String, Any>)
      suspend fun updateUserField(updateMap: Map<String, Any>)
     suspend fun delete(post: String)

@@ -22,9 +22,10 @@ fun HomeNavGraph(
     navController: NavHostController
 ) {
 
-    val eventViewModel: EventViewModel = viewModel()
+    val eventViewModel: EventViewModel = hiltViewModel()
     val communityViewModel: CommunityViewModel = hiltViewModel()
     communityViewModel.fetchAndStoreSavedPostIds(LocalContext.current)
+//    eventViewModel.fetchEvents()
 
     NavHost(
         navController = navController,
