@@ -3,7 +3,6 @@ package com.example.finalproject.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -53,10 +52,18 @@ fun HomeNavGraph(
         ) {
             ProfileScreen()
         }
-        composable(
-            route = Graph.REPORT
-        ) {
-            ReportScreen(navController)
+//        composable(
+//            route = Graph.REPORT
+//        ) {
+//            ReportScreen(navController)
+//        }
+        composable(route = Graph.REPORT) {navBackStackEntry ->
+            val postID = navBackStackEntry.arguments?.getString("docId")
+            if (postID != null) {
+                ReportScreen(postID, navController, communityViewModel::onReportSubmit)
+            } else {
+                navController.navigateUp()
+            }
         }
 //        postNavGraph(navController)
         composable(BottomBarScreen.Post.route) {
@@ -69,9 +76,7 @@ fun HomeNavGraph(
             if (postID != null) {
                 PostDetailsScreen(postID = postID, navController = navController, communityViewModel)
             } else {
-                CommunityScreen(navController, communityViewModel){ postId ->
-                    navController.navigate("post_detail/$postId")
-                }
+                navController.navigateUp()
             }
         }
     }

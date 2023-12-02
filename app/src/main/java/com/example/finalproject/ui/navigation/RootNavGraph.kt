@@ -53,7 +53,7 @@ object Graph {
     const val PROFILE = "profile_graph"
     const val POST = "post"
     const val COMMUNITY = "community"
-    const val REPORT = "report_graph"
+    const val REPORT = "report_graph/{docId}"
     const val VERIFY_EMAIL = "verify_email"
     const val SIGN_UP = "sign_up"
 }

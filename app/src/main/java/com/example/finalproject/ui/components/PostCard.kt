@@ -105,7 +105,7 @@ fun PostCard(
                     .fillMaxWidth()
             ) {
                 // Display Header
-                PostCardHeader(post.category, post.time.toDate(), navController)
+                PostCardHeader(post.id, post.category, post.time.toDate(), navController)
                 // Display the user name and the post time
                 Text(
                     text = post.title,
@@ -137,7 +137,7 @@ fun PostCard(
 
 
 @Composable
-fun PostCardHeader(category: String, date: Date, navController: NavController) {
+fun PostCardHeader(postId: String, category: String, date: Date, navController: NavController) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -163,7 +163,7 @@ fun PostCardHeader(category: String, date: Date, navController: NavController) {
         )
         Spacer(modifier = Modifier.width(8.dp))
 
-        PostDropDownMenu(navController)
+        PostDropDownMenu(postId, navController)
     }
 }
 
@@ -233,7 +233,7 @@ fun PostCardStatus(
 }
 
 @Composable
-fun PostDropDownMenu(navController: NavController) {
+fun PostDropDownMenu(postId: String, navController: NavController) {
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
 
         var expended by remember {
@@ -259,7 +259,10 @@ fun PostDropDownMenu(navController: NavController) {
             },
             modifier = Modifier
         ) {
-            DropdownMenuItem(text = { Text("Report") }, onClick = { navController.navigate(Graph.REPORT) })
+            DropdownMenuItem(
+                text = { Text("Report") },
+                onClick = { navController.navigate("report_graph/$postId") }
+            )
         }
     }
 }

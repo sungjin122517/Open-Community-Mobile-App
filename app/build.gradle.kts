@@ -104,6 +104,10 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycle_version")
 
+    implementation ("androidx.constraintlayout:constraintlayout:2.2.0-alpha13")
+    // To use constraintlayout in compose
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.1.0-alpha13")
+
     // Preferences DataStore (SharedPreferences like APIs)
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 //    androidTestImplementation( "androidx.compose.ui:ui-test-junit4:$version")

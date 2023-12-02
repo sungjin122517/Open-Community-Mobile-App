@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -67,12 +68,13 @@ fun CommunityScreen(navController: NavController, viewModel: CommunityViewModel 
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
 
     Scaffold (
+        modifier = Modifier,
         topBar = {TopAppBar(title = {Text("Community")})}
     ) { it ->
         Column(modifier = Modifier.padding(it)) {
 
             Spacer(     // horizontal divisor
-                modifier = Modifier
+                modifier = Modifier.imePadding()
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)

@@ -5,21 +5,40 @@ import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,12 +47,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.finalproject.ui.components.CommentSection
@@ -43,6 +69,8 @@ import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.model.User
 import com.example.finalproject.data.model.fetchComments
 import com.example.finalproject.data.model.fetchPost
+import com.example.finalproject.data.service.impl.CommunityServiceImpl
+import com.example.finalproject.data.service.impl.CommunityServiceTestImpl
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.CommunityViewModel
@@ -104,7 +132,9 @@ fun PostDetailsScreen(
     })
 
     Scaffold (
+        modifier = Modifier.imePadding(),
         topBar = { PostDetailTopBar(navController) },
+        bottomBar = {PostDetailBottomBar(post.value?:Post(), viewModel::onCommentSubmit)}
     ) {
         Column(
             modifier = Modifier
@@ -160,34 +190,82 @@ fun PostDetailTopBar(navController: NavController) {
                     tint = white
                 )
             }
-        },
-//        actions = {
-//            IconButton(
-//                onClick = {
-//                    /* TODO: Add code to navigate to 'report' screen */
-//                    navController.navigate(Graph.REPORT)
-//
-//                }
-//            ) {
-//                Icon(
-//                    imageVector = Icons.Default.Warning,
-//                    contentDescription = "Report",
-//                )
-//            }
-//        }
+        }
     )
 }
+
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalLayoutApi::class, ExperimentalFoundationApi::class
+)
+@Composable
+fun PostDetailBottomBar(post: Post, onCommentSubmit: (Context, Post, String) -> Unit) {
+    val context = LocalContext.current
+    val (commentInputText, setCommemtInputText) = remember { mutableStateOf("") }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val view = LocalView.current
+    fun onSubmit() {
+        onCommentSubmit(context, post, commentInputText)
+        setCommemtInputText("")
+        keyboardController?.hide()
+    }
+    val windowInsets = WindowInsets.isImeVisible
+    val bringIntoViewRequester = remember { BringIntoViewRequester()}
+
+
+//    Column {
+        Row (
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surfaceVariant),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            OutlinedTextField(
+                value = commentInputText,
+                onValueChange = setCommemtInputText,
+                placeholder = {Text(text = "Write your comments", color=Color.Black)},
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {onSubmit()}
+                ),
+                singleLine = true,
+                modifier = Modifier.padding(10.dp),
+                shape = RoundedCornerShape(25),
+                colors = TextFieldDefaults.colors(
+                    Color.Black,
+                    focusedContainerColor = Color.White,
+                    unfocusedContainerColor = Color.LightGray,
+                )
+            )
+//        Spacer(modifier = Modifier)
+            IconButton(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {onSubmit()}
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Send,
+                    contentDescription = "Send",
+                    modifier = Modifier.size(200.dp),
+                    tint = Color.White
+                )
+            }
+
+        }
+//    }
+
+}
+
 
 @Preview(showBackground = true)
 @Composable
 fun PostDetailScreenPreview() {
     FinalProjectTheme(darkTheme = true) {
-        val comments = mutableListOf<Comment>()
-        for (i in 1..5) {
-            comments.add(Comment())
-        }
-
-//        PostDetailsScreen("TEST_POST_ID", navController = NavController(LocalContext.current))
+        PostDetailsScreen("TEST_POST_ID",
+            navController = NavController(LocalContext.current),
+            CommunityViewModel(SavedStateHandle(), CommunityServiceTestImpl())
+        )
     }
 }
 

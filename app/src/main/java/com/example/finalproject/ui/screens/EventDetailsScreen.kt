@@ -75,20 +75,18 @@ fun EventDetailsScreen(navController: NavHostController, eventViewModel: EventVi
                         )
                     }
                 },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            /* TODO: Add code to navigate to 'report' screen */
-                            navController.navigate(Graph.REPORT)
-
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Warning,
-                            contentDescription = "Report"
-                        )
-                    }
-                }
+//                actions = {
+//                    IconButton(
+//                        onClick = {
+//                            navController.navigate("report_graph/${event?.id}")
+//                        }
+//                    ) {
+//                        Icon(
+//                            imageVector = Icons.Default.Warning,
+//                            contentDescription = "Report"
+//                        )
+//                    }
+//                }
             )
         },
         content = {

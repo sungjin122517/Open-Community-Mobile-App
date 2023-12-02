@@ -1,6 +1,7 @@
 package com.example.finalproject.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,11 +44,16 @@ import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.white
+import com.example.finalproject.ui.viewModels.CommunityViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ReportScreen(navController: NavHostController) {
+fun ReportScreen(
+    docId: String,
+    navController: NavHostController,
+    onSubmitReport: (Context, String, String) -> Unit
+) {
     val reportTypeList = listOf(
         "Spam",
         "Nudity or sexual activity",
@@ -54,7 +61,7 @@ fun ReportScreen(navController: NavHostController) {
         "Sale of illegal or regulated goods",
     )
     var selectedReportType by remember { mutableStateOf("") }
-
+    val context = LocalContext.current
     Scaffold(
         modifier = Modifier
             .background(darkBackground),
@@ -81,83 +88,81 @@ fun ReportScreen(navController: NavHostController) {
                     }
                 },
             )
-        },
-        content = {
-            innerPadding ->
+        }
+    ) {innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(darkBackground)
+                .padding(innerPadding)
+        ) {
+            Text(
+                text = "Please identify reason(s) for the report.",
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    color = white
+                ),
+                modifier = Modifier
+                    .padding(
+                        start = 20.dp,
+                        top = 30.dp,
+                        end = 20.dp,
+                        bottom = 20.dp
+                    )
+            )
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(darkBackground)
-                    .padding(innerPadding)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.Start,
             ) {
-                Text(
-                    text = "Please identify reason(s) for the report.",
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        color = white
-                    ),
-                    modifier = Modifier
-                        .padding(
-                            start = 20.dp,
-                            top = 30.dp,
-                            end = 20.dp,
-                            bottom = 20.dp
+                reportTypeList.forEach { reportType ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 10.dp)
+                            .clickable(onClick = { selectedReportType = reportType }),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        RadioButton(
+                            selected = selectedReportType == reportType,
+                            onClick = { selectedReportType = reportType },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = red
+                            )
                         )
-                )
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start,
-                ) {
-                    reportTypeList.forEach { reportType ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 20.dp, vertical = 10.dp)
-                                .clickable(onClick = { selectedReportType = reportType }),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            RadioButton(
-                                selected = selectedReportType == reportType,
-                                onClick = { selectedReportType = reportType },
-                                colors = RadioButtonDefaults.colors(
-                                    selectedColor = red
-                                )
-                            )
-                            Text(
-                                text = reportType,
-                                color = white,
-                                modifier = Modifier.padding(start = 16.dp),
-                            )
-                        }
+                        Text(
+                            text = reportType,
+                            color = white,
+                            modifier = Modifier.padding(start = 16.dp),
+                        )
                     }
                 }
-                Spacer(modifier = Modifier.weight(1f))
-                Button(
-                    onClick = {
-                        // Handle report submission here
-//                        onReportSubmitted()
-                    },
-                    modifier = Modifier
-                        .padding(bottom = 40.dp)
-                        .width(300.dp)
-                        .height(48.dp)
-                        .align(Alignment.CenterHorizontally),
-                    shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = red,
-                        disabledContainerColor = grey
-                    ),
-                    enabled = selectedReportType.isNotEmpty(),
-                ) {
-                    Text(
-                        text = "Submit",
-                        fontFamily = FontFamily.SansSerif,
-                        fontWeight = FontWeight.W600,
-                        color = white,
-                    )
-                }
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                onClick = {
+                    onSubmitReport(context, docId, selectedReportType)
+                    navController.navigateUp()
+                },
+                modifier = Modifier
+                    .padding(bottom = 40.dp)
+                    .width(300.dp)
+                    .height(48.dp)
+                    .align(Alignment.CenterHorizontally),
+                shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = red,
+                    disabledContainerColor = grey
+                ),
+                enabled = selectedReportType.isNotEmpty(),
+            ) {
+                Text(
+                    text = "Submit",
+                    fontFamily = FontFamily.SansSerif,
+                    fontWeight = FontWeight.W600,
+                    color = white,
+                )
             }
         }
-    )
+    }
 }

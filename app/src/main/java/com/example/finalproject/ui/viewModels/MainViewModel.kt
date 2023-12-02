@@ -16,6 +16,8 @@ class MainViewModel @Inject constructor(
 
     fun getAuthState() = service.getAuthState(viewModelScope)
 
+//    fun sotoreUserPreference()
+
     val isEmailVerified get() = service.currentUser?.isEmailVerified ?: false
     val userID get() = service.currentUser?.uid.toString()
 }
