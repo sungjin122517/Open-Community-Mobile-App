@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -24,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.ui.components.CategoryButton
@@ -51,8 +54,8 @@ fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
     var pagerState = rememberPagerState {
         tabItems.size
     }
-    val eventList = listOf<Event>(Event(), Event(), Event(), Event(), Event(), Event())
-
+//    val eventList = eventViewModel.fetchEvents() ?: mutableListOf<Event>()
+    val eventList = eventViewModel.eventList
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -90,7 +93,8 @@ fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
                     .weight(1f)
                 ) {index ->
             }
-            EventList(events = eventList, navController, eventViewModel)
+
+            EventList(events = eventList.toList(), navController, eventViewModel)
 
 //            Divider(
 //                modifier = Modifier,
@@ -158,7 +162,7 @@ fun EventScreenPreview() {
                     modifier = Modifier
                         .padding(padding)
                 ){
-                    EventScreen(navController = navController, eventViewModel = EventViewModel())
+                    EventScreen(navController = navController, eventViewModel = hiltViewModel())
                 }
             }
         )

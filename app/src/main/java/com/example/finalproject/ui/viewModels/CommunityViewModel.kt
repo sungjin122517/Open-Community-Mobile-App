@@ -4,16 +4,16 @@ import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.finalproject.data.getUserID
 import com.example.finalproject.data.model.Comment
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.savedPostIDs
 import com.example.finalproject.data.service.CommunityService
+import com.google.firebase.Timestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -29,6 +29,7 @@ class CommunityViewModel @Inject constructor(
 //    var post: Flow<Post?> get() = viewModelScope.launch {
 //        service.getPost()
 //    }
+
 
 
     var savedPOstIds = hashSetOf<String>()
@@ -81,6 +82,36 @@ class CommunityViewModel @Inject constructor(
         Log.d(TAG, "Paco: onSave after ${post.id}, is saved=$isSaved")
     }
 
+    fun onReportSubmit(context: Context, postId: String, reportReason: String) {
+        Log.d(TAG, "Paco: submit report:$postId")
+        getUserID(context) {userId ->
+            val report = mapOf(
+                "reporterId" to userId!!,
+                "reportReason" to reportReason,
+                "submitDateTime" to Timestamp.now()
+            )
+            viewModelScope.launch {
+                service.addReport(postId, report)
+            }
+        }
+    }
+
+    fun onCommentSubmit(context: Context, post: Post, commentText: String) {
+        Log.d(TAG, "Paco: submit comment for post = ${post.id}, commet = $commentText")
+        getUserID(context) {userId ->
+            val report = mapOf(
+                "writerId" to userId!!,
+                "content" to commentText,
+                "time" to Timestamp.now(),
+                "isWriter" to (userId == post.writerId),
+                "isDeleted" to false
+            )
+            viewModelScope.launch {
+                service.addComment(post, report)
+            }
+        }
+    }
+
     fun onRefresh() {}
 
 
@@ -108,6 +139,16 @@ class CommunityViewModel @Inject constructor(
 //                .apply()
         }
     }
+
+//    fun fetchEvents(date: Timestamp = Timestamp.now()) {
+//        Log.d(TAG, "Paco: today is $date")
+//        viewModelScope.launch {
+//            val events = service.getEvents(date)
+//            Log.d(TAG, "Paco: events = $events")
+//
+//        }
+//    }
+
 }
 
 //@Module

@@ -38,7 +38,7 @@ data class Post(
     @DocumentId val id: String = "",
     val category: String = "Academic",
     val title: String = "",
-    val time: Timestamp = Timestamp(Date(0)),
+    val time: Timestamp = Timestamp.now(),
     val writerId: String = "",         // should be another class User
     val content: String = "",
     val deleted: Boolean = false,

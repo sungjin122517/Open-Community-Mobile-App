@@ -2,8 +2,10 @@ package com.example.finalproject.data.service.module
 
 import com.example.finalproject.data.service.AuthService
 import com.example.finalproject.data.service.CommunityService
+import com.example.finalproject.data.service.EventService
 import com.example.finalproject.data.service.impl.AuthServiceImpl
 import com.example.finalproject.data.service.impl.CommunityServiceImpl
+import com.example.finalproject.data.service.impl.EventServiceImpl
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -28,13 +30,13 @@ object AppModule {
         )
     )
 
-//    @Provides
-//    fun providePostService(): PostService = PostServiceImpl(
-//        Firebase.firestore,
+    @Provides
+    fun provideEventService(): EventService = EventServiceImpl(
+        Firebase.firestore,
 //        auth = AuthServiceImpl(
 //            auth = Firebase.auth,
 //        ),
-//    )
+    )
 }
 
 //@Module

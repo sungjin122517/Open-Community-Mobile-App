@@ -132,7 +132,7 @@ fun CategoryButton(value: String) {
 @Composable
 fun EventDate(event: Event) {
     Text(
-        text = SimpleDateFormat("yyyy-MM-dd").format(event.eventTime),
+        text = SimpleDateFormat("yyyy-MM-dd").format(event.eventTime.toDate()),
         style = TextStyle(
 //            fontFamily = FontFamily("Outfit"),
             color = grey,
@@ -145,7 +145,7 @@ fun EventDate(event: Event) {
 
 @Composable
 fun EventHashTag(event: Event) {
-    val tags = event.tag.joinToString(" #", prefix = "#")
+    val tags = event.tags.joinToString(" #", prefix = "#")
 
     Text(
         text = tags,
@@ -194,7 +194,7 @@ fun SingleHashtag(event: Event, index: Int) {
             .background(color = backgroundColor, shape = RoundedCornerShape(10.dp))
     ) {
         Text(
-            text = "#${event.tag[index]}",
+            text = "#${event.tags[index]}",
             color = white,
             fontSize = 12.sp,
             modifier = Modifier
@@ -206,8 +206,8 @@ fun SingleHashtag(event: Event, index: Int) {
 @Composable
 fun CategoryHashtag(event: Event) {
     Row {
-        event.tag.forEach { tag ->
-            SingleHashtag(event = event, index = event.tag.indexOf(tag))
+        event.tags.forEach { tag ->
+            SingleHashtag(event = event, index = event.tags.indexOf(tag))
         }
     }
 }
@@ -237,7 +237,7 @@ fun QuickView(event: Event) {
                     color = grey
                 )
                 Text(
-                    text = SimpleDateFormat("dd MMM y").format(event.eventTime),
+                    text = SimpleDateFormat("dd MMM y").format(event.eventTime.toDate()),
                     fontSize = 16.sp,
                     color = white,
                     fontWeight = FontWeight.Bold
@@ -251,7 +251,7 @@ fun QuickView(event: Event) {
                     color = grey
                 )
                 Text(
-                    text = SimpleDateFormat("HH:mm").format(event.eventTime),
+                    text = SimpleDateFormat("HH:mm").format(event.eventTime.toDate()),
                     fontSize = 16.sp,
                     color = white,
                     fontWeight = FontWeight.Bold
@@ -307,7 +307,7 @@ fun DetailedView(event: Event) {
                 modifier = Modifier.width(80.dp)
             )
             Text(
-                text = SimpleDateFormat("dd MMM y").format(event.eventTime),
+                text = SimpleDateFormat("dd MMM y").format(event.eventTime.toDate()),
                 fontSize = 16.sp,
                 color = white,
                 fontWeight = FontWeight.Bold
@@ -322,7 +322,7 @@ fun DetailedView(event: Event) {
                 modifier = Modifier.width(80.dp)
             )
             Text(
-                text = SimpleDateFormat("HH:mm").format(event.eventTime),
+                text = SimpleDateFormat("HH:mm").format(event.eventTime.toDate()),
                 fontSize = 16.sp,
                 color = white,
                 fontWeight = FontWeight.Bold
@@ -337,7 +337,7 @@ fun DetailedView(event: Event) {
                 modifier = Modifier.width(80.dp)
             )
             Text(
-                text = event.language.joinToString(", "),
+                text = event.language,
                 fontSize = 16.sp,
                 color = white,
                 fontWeight = FontWeight.Bold
