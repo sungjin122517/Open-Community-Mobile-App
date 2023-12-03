@@ -3,11 +3,14 @@ package com.example.finalproject.data.service.impl
 import android.content.ContentValues
 import android.util.Log
 import com.example.finalproject.data.model.Event
+import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.service.EventService
 import com.example.finalproject.data.utils.await
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.dataObjects
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,6 +28,7 @@ class EventServiceImpl @Inject constructor(
     ) {
         val query = firestore.collection(EVENT_COLLECTION)
                         .whereEqualTo(EVENT_IS_EXPIRED, false)
+//                        .orderBy("eventTime", Query.Direction.DESCENDING)
 
         query.addSnapshotListener { value, error ->
             if (error != null) {

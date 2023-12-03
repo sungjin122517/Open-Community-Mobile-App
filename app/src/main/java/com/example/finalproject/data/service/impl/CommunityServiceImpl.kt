@@ -12,9 +12,12 @@ import com.example.finalproject.data.model.User
 import com.example.finalproject.data.service.AuthService
 import com.example.finalproject.data.service.CommunityService
 import com.example.finalproject.data.utils.await
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.dataObjects
+import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -50,6 +53,14 @@ class CommunityServiceImpl @Inject constructor(
             .orderBy("time", Query.Direction.DESCENDING).dataObjects<Comment>()
     }
 
+//    override suspend fun getSavedPosts(userId: String): Flow<List<Post>> {
+////        user.collect { user ->
+////            Log.d(TAG, "Paco: collect Saved Post")
+////            val savedPostsId = user?.savedPostIds
+////        }
+////        return firestore.collection(USER_COLLECTION)
+//    }
+
 //    suspend fun getSavedPostId(postId: String): List<String>{
 //        return userc
 //    }
@@ -64,6 +75,17 @@ class CommunityServiceImpl @Inject constructor(
         Trace.beginSection(UPDATE_POST_TRACE)
         firestore.collection(POST_COLLECTION).document(postId).update(updateMap).await()
         Trace.endSection()
+    }
+
+    override suspend fun createPost(post: Post) {
+        firestore.collection(POST_COLLECTION).add(post)
+            .addOnSuccessListener { postRef ->
+                firestore.collection(USER_COLLECTION).document(auth.currentUser?.uid!!)
+                    .update(mapOf(
+                        "myPostIds" to FieldValue.arrayUnion(postRef.id)
+                    ))
+
+            }
     }
 
     override suspend fun addComment(post: Post, commentMap: Map<String, Any>) {
@@ -128,6 +150,11 @@ class CommunityServiceTestImpl @Inject constructor(): CommunityService {
     override fun getPostComment(postId: String): Flow<List<Comment>> {
         return flowOf(listOf<Comment>(Comment(content = "Comment")))
     }
+
+    override suspend fun createPost(post: Post) {
+        TODO("Not yet implemented")
+    }
+
 
     override suspend fun updatePostField(postId: String, updateMap: Map<String, Any>) {
         TODO("Not yet implemented")

@@ -46,6 +46,13 @@ import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.CommunityViewModel
 
+val REPORT_TYPE_LIST = listOf(
+    "Spam",
+    "Nudity or sexual activity",
+    "False information",
+    "Sale of illegal or regulated goods",
+)
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,12 +61,6 @@ fun ReportScreen(
     navController: NavHostController,
     onSubmitReport: (Context, String, String) -> Unit
 ) {
-    val reportTypeList = listOf(
-        "Spam",
-        "Nudity or sexual activity",
-        "False information",
-        "Sale of illegal or regulated goods",
-    )
     var selectedReportType by remember { mutableStateOf("") }
     val context = LocalContext.current
     Scaffold(
@@ -115,7 +116,7 @@ fun ReportScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.Start,
             ) {
-                reportTypeList.forEach { reportType ->
+                REPORT_TYPE_LIST.forEach { reportType ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()

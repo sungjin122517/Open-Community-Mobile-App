@@ -45,6 +45,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.data.model.User
 import com.example.finalproject.ui.components.PostCard
+import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.blue
 import com.example.finalproject.ui.theme.red
@@ -56,7 +57,10 @@ import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CommunityScreen(navController: NavController, viewModel: CommunityViewModel = hiltViewModel(), openPostDetailScreen: (String) -> Unit) {
+fun CommunityScreen(
+    navController: NavController,
+    viewModel: CommunityViewModel = hiltViewModel(),
+    openPostDetailScreen: (String) -> Unit) {
     /*
     * Features:
     *   1. View PostFeed
