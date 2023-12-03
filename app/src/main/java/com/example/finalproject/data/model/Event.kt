@@ -9,14 +9,15 @@ data class Event(
     val title: String = "Tissue-engineering Integrated",
     val category: String = "Seminar",
     val tags: List<String> = listOf("environment", "education"),
-    val description: String = "Since their first direct discovery in 2015, gravitational waves have contributed significantly to knowledge about astrophysics and fundamental physics. This talk will first introduce the Open... ",
+    val description: String = "N/A",
     val language: String = "English",
     val location: String = "IAS4042, 4/F, Lo Ka Chung Building, Lee Shau Kee Campus, HKUST",
-    val eventTime: Timestamp = Timestamp.now(),
+    val eventDate: Timestamp = Timestamp.now(),
+    val eventTime: String = "N/A",
     val uploadTime: Timestamp = Timestamp.now(),
     val isFormal: Boolean = false,
     var isExpired: Boolean = false,
-    val registerLink: String = "www.google.com",
+    val registerLink: String = "",
     val imageURL: String = "https://apru.org/wp-content/uploads/2021/12/HKUST.png"
 
 

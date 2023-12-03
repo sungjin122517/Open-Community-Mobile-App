@@ -41,7 +41,7 @@ import com.example.finalproject.ui.theme.white
 import java.text.SimpleDateFormat
 
 @Composable
-fun EventTitle(value: String) {
+fun EventTitle(value: String, isDetail: Boolean = false) {
     Box(modifier = Modifier) {
         Text(
             text = value,
@@ -50,7 +50,7 @@ fun EventTitle(value: String) {
                 .wrapContentHeight(),
             softWrap = true,
             overflow = TextOverflow.Ellipsis,
-            maxLines = 2,
+            maxLines = if (isDetail) 5 else 2,
             style = MaterialTheme.typography.titleSmall
                 .copy(
                     fontFamily = FontFamily.SansSerif,
@@ -132,7 +132,7 @@ fun CategoryButton(value: String) {
 @Composable
 fun EventDate(event: Event) {
     Text(
-        text = SimpleDateFormat("yyyy-MM-dd").format(event.eventTime.toDate()),
+        text = SimpleDateFormat("yyyy-MM-dd").format(event.eventDate.toDate()),
         style = TextStyle(
 //            fontFamily = FontFamily("Outfit"),
             color = grey,
@@ -237,7 +237,7 @@ fun QuickView(event: Event) {
                     color = grey
                 )
                 Text(
-                    text = SimpleDateFormat("dd MMM y").format(event.eventTime.toDate()),
+                    text = SimpleDateFormat("dd MMM y").format(event.eventDate.toDate()),
                     fontSize = 16.sp,
                     color = white,
                     fontWeight = FontWeight.Bold
@@ -251,7 +251,7 @@ fun QuickView(event: Event) {
                     color = grey
                 )
                 Text(
-                    text = SimpleDateFormat("HH:mm").format(event.eventTime.toDate()),
+                    text = event.eventTime,
                     fontSize = 16.sp,
                     color = white,
                     fontWeight = FontWeight.Bold
@@ -307,7 +307,7 @@ fun DetailedView(event: Event) {
                 modifier = Modifier.width(80.dp)
             )
             Text(
-                text = SimpleDateFormat("dd MMM y").format(event.eventTime.toDate()),
+                text = SimpleDateFormat("dd MMM y").format(event.eventDate.toDate()),
                 fontSize = 16.sp,
                 color = white,
                 fontWeight = FontWeight.Bold
@@ -322,7 +322,7 @@ fun DetailedView(event: Event) {
                 modifier = Modifier.width(80.dp)
             )
             Text(
-                text = SimpleDateFormat("HH:mm").format(event.eventTime.toDate()),
+                text = event.eventTime,
                 fontSize = 16.sp,
                 color = white,
                 fontWeight = FontWeight.Bold
