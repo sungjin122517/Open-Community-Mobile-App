@@ -130,49 +130,54 @@ fun PostDetailsScreen(
 
         isRefreshing = false
     })
+//    Column (modifier = Modifier.fillMaxSize()) {
 
-    Scaffold (
-        modifier = Modifier.imePadding(),
-        topBar = { PostDetailTopBar(navController) },
-        bottomBar = {PostDetailBottomBar(post.value?:Post(), viewModel::onCommentSubmit)}
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(it)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Scaffold (
+            modifier = Modifier.imePadding(),
+            topBar = { PostDetailTopBar(navController) },
+        bottomBar = {PostDetailBottomBar(Modifier,post.value?:Post(), viewModel::onCommentSubmit)}
         ) {
-
-            Spacer(     // horizontal divisor
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
-            )
-            PostCard(Modifier, post.value?: Post(), navController, post.value?.id in user.value!!.savedPostIds, {
-                context, post_id, b ->
+                    .padding(it)
+                    .fillMaxHeight(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+
+                Spacer(     // horizontal divisor
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(color = MaterialTheme.colorScheme.surfaceVariant)
+                )
+                PostCard(Modifier, post.value?: Post(), navController, post.value?.id in user.value!!.savedPostIds, {
+                        context, post_id, b ->
                     viewModel.onSaveClicked(context, post_id, b)
 //                    post = viewModel.fetchPost(postID)
-                Log.d(TAG, "Paco: update saveCount: ${post.value?.saveCount}")
-            }, {s ->})
-            Spacer(     // horizontal divisor
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
-                    .background(color = MaterialTheme.colorScheme.background)
-            )
-            Spacer(     // horizontal divisor
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
-            )
-            CommentSection(comments.value.toTypedArray(), modifier = Modifier
-                .pullRefresh(state))
+                    Log.d(TAG, "Paco: update saveCount: ${post.value?.saveCount}")
+                }, {s ->})
+                Spacer(     // horizontal divisor
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp)
+                        .background(color = MaterialTheme.colorScheme.background)
+                )
+                Spacer(     // horizontal divisor
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(color = MaterialTheme.colorScheme.surfaceVariant)
+                )
+                CommentSection(comments.value.toTypedArray(),
+                    modifier = Modifier.fillMaxHeight()
+                    .pullRefresh(state))
+//                PostDetailBottomBar(Modifier.align(Alignment.End),post.value?:Post(), viewModel::onCommentSubmit)
 //            Text("Something went wrong.")
 //            Text("Please try again.")
+            }
         }
-    }
+
+//    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -198,7 +203,7 @@ fun PostDetailTopBar(navController: NavController) {
     ExperimentalLayoutApi::class, ExperimentalFoundationApi::class
 )
 @Composable
-fun PostDetailBottomBar(post: Post, onCommentSubmit: (Context, Post, String) -> Unit) {
+fun PostDetailBottomBar(modifier: Modifier, post: Post, onCommentSubmit: (Context, Post, String) -> Unit) {
     val context = LocalContext.current
     val (commentInputText, setCommemtInputText) = remember { mutableStateOf("") }
 
@@ -215,7 +220,7 @@ fun PostDetailBottomBar(post: Post, onCommentSubmit: (Context, Post, String) -> 
 
 //    Column {
         Row (
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             verticalAlignment = Alignment.CenterVertically
