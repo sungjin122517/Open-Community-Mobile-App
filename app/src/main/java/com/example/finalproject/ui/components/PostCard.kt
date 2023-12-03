@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.sp
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.finalproject.data.USER_ID
 //import com.example.finalproject.data.checkSavedPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.data.model.Post

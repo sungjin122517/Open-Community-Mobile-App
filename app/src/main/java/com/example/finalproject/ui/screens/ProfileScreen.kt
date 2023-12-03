@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
@@ -27,21 +30,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
+import com.example.finalproject.data.Preferences
+import com.example.finalproject.data.model.Post
+import com.example.finalproject.data.model.User
+import com.example.finalproject.ui.components.PostCard
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.white
+import com.example.finalproject.ui.viewModels.CommunityViewModel
 import com.example.finalproject.ui.viewModels.ProfileViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -78,8 +90,12 @@ fun UserGreetings(username: String) {
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel = hiltViewModel()
+    navController: NavController,
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    communityViewModel: CommunityViewModel = hiltViewModel(),
+    openPostDetailScreen: (String) -> Unit
 ) {
+    val context = LocalContext.current
     var selectedTabIndex = remember { mutableIntStateOf(0) }
 
     val tabItems = listOf(
@@ -92,20 +108,13 @@ fun ProfileScreen(
     var openMenu by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf("")}
 
-    var currentUserId = viewModel.getUserId
-    LaunchedEffect(currentUserId) {
-        if (currentUserId != null) {
-            val userRef = FirebaseFirestore.getInstance().collection("users").document(currentUserId)
-            userRef.get().addOnSuccessListener { documentSnapshot ->
-                username = documentSnapshot.getString("username")!!
-            }
-        } else {
-            username = "User"
-        }
+    Preferences.getUserName(context) {
+        username = it ?: "User"
     }
 
     Surface(
         modifier = Modifier
+            .imePadding()
             .fillMaxSize()
             .background(darkBackground)
     ) {
@@ -161,7 +170,7 @@ fun ProfileScreen(
                                 )
                             },
                             onClick = {
-                                viewModel.signOut()
+                                profileViewModel.signOut()
                                 openMenu = !openMenu
                             },
                             colors = MenuDefaults.itemColors(darkBackground)
@@ -204,32 +213,35 @@ fun ProfileScreen(
             }
             when (selectedTabIndex.value) {
                 0 -> {
-                    Column (
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(darkBackground),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        Text(
-                            text = "No Posts",
-                            color = white
-                        )
-                    }
+                    MyPostList(navController = navController, viewModel = communityViewModel, openPostDetailScreen = openPostDetailScreen)
+
+                    //                    Column (
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .background(darkBackground),
+//                        verticalArrangement = Arrangement.Center,
+//                        horizontalAlignment = Alignment.CenterHorizontally
+//                    ){
+//                        Text(
+//                            text = "No Posts",
+//                            color = white
+//                        )
+//                    }
                 }
                 1 -> {
-                    Column (
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(darkBackground),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ){
-                        Text(
-                            text = "No Saved",
-                            color = white
-                        )
-                    }
+                    SavedPostList(navController = navController, viewModel = communityViewModel, openPostDetailScreen = openPostDetailScreen)
+//                    Column (
+//                        modifier = Modifier
+//                            .fillMaxSize()
+//                            .background(darkBackground),
+//                        verticalArrangement = Arrangement.Center,
+//                        horizontalAlignment = Alignment.CenterHorizontally
+//                    ){
+//                        Text(
+//                            text = "No Saved",
+//                            color = white
+//                        )
+//                    }
                 }
             }
         }
@@ -237,12 +249,102 @@ fun ProfileScreen(
     }
 }
 
+@Composable
+fun MyPostList(
+    modifier: Modifier = Modifier,
+    viewModel: CommunityViewModel = hiltViewModel(),
+    navController: NavController,
+    openPostDetailScreen: (String) -> Unit
+) {
+//    val savedPostsIds by remember {
+//        mutableStateOf(listOf<String>())
+//    }
+
+    val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+    val myPostIds = user.value!!.myPostIds
+
+    if (myPostIds.isNotEmpty()){
+        LazyColumn(modifier = modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            items(myPostIds) {postId ->
+                val post = viewModel.fetchPost(postId).collectAsStateWithLifecycle(initialValue = Post())
+                PostCard(
+                    Modifier,
+                    post = post.value?: Post(),
+                    navController = navController,
+                    isSaved = postId in user.value!!.savedPostIds,
+                    viewModel::onSaveClicked,
+                    openPostDetailScreen
+                )
+
+            }
+        }
+    } else {
+        LazyColumn(modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            item {
+                Text("No Post Created Yet", modifier = Modifier)
+            }
+        }
+    }
+
+//    viewModel.savedPOstIds.li
+}
+
+
+@Composable
+fun SavedPostList(
+    modifier: Modifier = Modifier,
+    viewModel: CommunityViewModel = hiltViewModel(),
+    navController: NavController,
+    openPostDetailScreen: (String) -> Unit
+) {
+//    val savedPostsIds by remember {
+//        mutableStateOf(listOf<String>())
+//    }
+
+    val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+    val savedPostIds = user.value!!.savedPostIds
+
+    if (savedPostIds.isNotEmpty()){
+        LazyColumn(modifier = modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            items(savedPostIds) {postId ->
+                val post = viewModel.fetchPost(postId).collectAsStateWithLifecycle(initialValue = Post())
+                PostCard(
+                    Modifier,
+                    post = post.value?: Post(),
+                    navController = navController,
+                    isSaved = postId in user.value!!.savedPostIds,
+                    viewModel::onSaveClicked,
+                    openPostDetailScreen
+                )
+
+            }
+        }
+    } else {
+        LazyColumn(modifier = modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            item {
+                Text("No Saved Post Yet", modifier = Modifier)
+            }
+        }
+    }
+
+//    viewModel.savedPOstIds.li
+}
+
+
 
 
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
     FinalProjectTheme {
-        ProfileScreen()
+//        ProfileScreen()
     }
 }

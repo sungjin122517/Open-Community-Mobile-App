@@ -24,57 +24,68 @@ import kotlinx.coroutines.launch
 val Context.userPreferences by preferencesDataStore(name = "userPreferences")
 val Context.savedPostIDs by preferencesDataStore(name = "savedPostIDs")
 
-val USER_ID = stringPreferencesKey("userID")
-//val SAVED_POST = Preferences.Key
+object Preferences {
+    val USER_ID_KEY = stringPreferencesKey("userID")
+    val USER_NAME_KEY = stringPreferencesKey("userName")
 
-fun getUserID(context: Context, callback: (String?) -> Unit) {
-    CoroutineScope(Dispatchers.Main).launch {
-        val userID = context.userPreferences.data.map { preferences ->
-            preferences[USER_ID]
-        }.first()
-        callback(userID)
+    fun getUserId(context: Context, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val userID = context.userPreferences.data.map { preferences ->
+                preferences[USER_ID_KEY]
+            }.first()
+            callback(userID)
+        }
+    }
+
+    fun getUserName(context: Context, callback: (String?) -> Unit) {
+        CoroutineScope(Dispatchers.Main).launch {
+            val userName = context.userPreferences.data.map { preferences ->
+                preferences[USER_NAME_KEY]
+            }.first()
+            callback(userName)
+        }
     }
 }
-
-
-suspend fun storeSavedPostId(
-    context: Context,
-    postId: String,
-    isSaved: Boolean = true
-){
-    val key = booleanPreferencesKey(postId)
-    context.savedPostIDs.edit { preferences ->
-        preferences[key] = isSaved
-    }
-}
-
-suspend fun removeSavedPostId(
-    context: Context,
-    postId: String
-){
-    val key = booleanPreferencesKey(postId)
-    context.savedPostIDs.edit { preferences ->
-        preferences.remove(key)
-    }
-}
-
-//fun checkSavedPost(
+//
+//
+//suspend fun storeSavedPostId(
 //    context: Context,
-//    postId: String
-//): Flow<Boolean> {
+//    postId: String,
+//    isSaved: Boolean = true
+//){
 //    val key = booleanPreferencesKey(postId)
-//    Log.d(TAG, "Paco: checkSavedPost $postId")
-//    return context.savedPostIDs.data.map { preferences ->
-//        preferences.contains(key)
+//    context.savedPostIDs.edit { preferences ->
+//        preferences[key] = isSaved
 //    }
 //}
-
-
-fun getSavedPost(
-    context: Context,
-    postId: String
-): Flow<Preferences> {
-    val key = booleanPreferencesKey(postId)
-    Log.d(TAG, "Paco: checkSavedPost $postId")
-    return context.savedPostIDs.data
-}
+//
+//suspend fun removeSavedPostId(
+//    context: Context,
+//    postId: String
+//){
+//    val key = booleanPreferencesKey(postId)
+//    context.savedPostIDs.edit { preferences ->
+//        preferences.remove(key)
+//    }
+//}
+//
+////fun checkSavedPost(
+////    context: Context,
+////    postId: String
+////): Flow<Boolean> {
+////    val key = booleanPreferencesKey(postId)
+////    Log.d(TAG, "Paco: checkSavedPost $postId")
+////    return context.savedPostIDs.data.map { preferences ->
+////        preferences.contains(key)
+////    }
+////}
+//
+//
+//fun getSavedPost(
+//    context: Context,
+//    postId: String
+//): Flow<Preferences> {
+//    val key = booleanPreferencesKey(postId)
+//    Log.d(TAG, "Paco: checkSavedPost $postId")
+//    return context.savedPostIDs.data
+//}
