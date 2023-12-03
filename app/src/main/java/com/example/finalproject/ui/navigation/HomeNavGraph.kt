@@ -15,6 +15,7 @@ import com.example.finalproject.ui.screens.ProfileScreen
 import com.example.finalproject.ui.screens.ReportScreen
 import com.example.finalproject.ui.viewModels.EventViewModel
 import com.example.finalproject.ui.viewModels.CommunityViewModel
+import com.example.finalproject.ui.viewModels.ProfileViewModel
 
 @Composable
 fun HomeNavGraph(
@@ -22,6 +23,7 @@ fun HomeNavGraph(
 ) {
 
     val eventViewModel: EventViewModel = hiltViewModel()
+    val profileViewModel: ProfileViewModel = hiltViewModel()
     val communityViewModel: CommunityViewModel = hiltViewModel()
     communityViewModel.fetchAndStoreSavedPostIds(LocalContext.current)
 //    eventViewModel.fetchEvents()
@@ -39,7 +41,9 @@ fun HomeNavGraph(
         composable(
             route = BottomBarScreen.Profile.route
         ) {
-            ProfileScreen()
+            ProfileScreen(navController, profileViewModel, communityViewModel) { postId ->
+                navController.navigate("post_detail/$postId")
+            }
         }
         composable(
             route = Graph.EVENT_DETAILS
@@ -50,7 +54,9 @@ fun HomeNavGraph(
         composable(
             route = Graph.PROFILE
         ) {
-            ProfileScreen()
+            ProfileScreen(navController, profileViewModel, communityViewModel) { postId ->
+                navController.navigate("post_detail/$postId")
+            }
         }
 //        composable(
 //            route = Graph.REPORT

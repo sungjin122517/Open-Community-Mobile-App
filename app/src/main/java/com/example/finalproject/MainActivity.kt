@@ -13,7 +13,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.datastore.preferences.core.edit
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.example.finalproject.data.USER_ID
 import com.example.finalproject.data.userPreferences
 import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.navigation.RootNavigationGraph
@@ -57,13 +56,7 @@ class MainActivity : ComponentActivity() {
             NavigateToSignInScreen()
         } else {
             if (viewModel.isEmailVerified) {
-                val userID = viewModel.userID
-
-                runBlocking {
-                    applicationContext.userPreferences.edit { preferences ->
-                        preferences[USER_ID] = userID
-                    }
-                }
+                viewModel.storeUserPreference(applicationContext)
                 Log.d(TAG, "useID: ${viewModel.userID}")
                 NavigateToHomeScreen()
             } else {

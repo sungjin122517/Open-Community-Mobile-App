@@ -44,7 +44,10 @@ import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun CommunityScreen(navController: NavController, viewModel: CommunityViewModel = hiltViewModel(), openPostDetailScreen: (String) -> Unit) {
+fun CommunityScreen(
+    navController: NavController,
+    viewModel: CommunityViewModel = hiltViewModel(),
+    openPostDetailScreen: (String) -> Unit) {
     /*
     * Features:
     *   1. View PostFeed

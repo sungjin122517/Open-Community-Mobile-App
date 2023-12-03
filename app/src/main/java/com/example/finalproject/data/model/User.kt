@@ -5,5 +5,6 @@ data class User (
     val school: String = "HKUST",
     val uid: String = "0",
     val email: String = "",
-    var savedPostIds: MutableList<String> = mutableListOf<String>()
+    var savedPostIds: MutableList<String> = mutableListOf<String>(),
+    var myPostIds: MutableList<String> = mutableListOf<String>()
 )

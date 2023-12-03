@@ -8,7 +8,7 @@ import com.google.firebase.firestore.DocumentReference
 import java.util.Date
 
 enum class PostCategory(val value: String, val description: String) {
-    JUST_TALK("Just talk", "Posts that are casual and informal"),
+    JUST_TALK("Just Talk", "Posts that are casual and informal"),
     ACADEMIC("Academic", "Posts that are related to academic topics")
 }
 
