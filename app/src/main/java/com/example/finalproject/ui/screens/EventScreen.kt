@@ -3,6 +3,7 @@ package com.example.finalproject.ui.screens
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -174,12 +175,17 @@ data class TabItem(
 
 @Composable
 fun EventUI(event: Event, navController: NavController, eventViewModel: EventViewModel) {
+    val interactionSource = remember { MutableInteractionSource() }
+
     Column(
         modifier = Modifier
             .padding(start = 8.dp, top = 12.dp, end = 6.dp)
             .width(176.dp)
             .background(darkBackground)
-            .clickable {
+            .clickable (
+                interactionSource = interactionSource,
+                indication = null,
+            ) {
 //                navController.currentBackStackEntry?.savedStateHandle?.set(
 //                    key = "event",
 //                    value = event
