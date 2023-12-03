@@ -155,7 +155,7 @@ fun PostDetailsScreen(
                     viewModel.onSaveClicked(context, post_id, b)
 //                    post = viewModel.fetchPost(postID)
                     Log.d(TAG, "Paco: update saveCount: ${post.value?.saveCount}")
-                }, {s ->}, {post},viewModel::getTimeDifference)
+                }, {s ->}, {post},viewModel::getTimeDifference, true)
 //                Spacer(     // horizontal divisor
 //                    modifier = Modifier
 //                        .fillMaxWidth()
@@ -169,8 +169,9 @@ fun PostDetailsScreen(
 //                        .background(color = MaterialTheme.colorScheme.surfaceVariant)
 //                )
                 CommentSection(comments.toTypedArray(),
-                    modifier = Modifier.fillMaxHeight()
-                    .pullRefresh(state))
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .pullRefresh(state))
 
 //                PostDetailBottomBar(Modifier.align(Alignment.End),post.value?:Post(), viewModel::onCommentSubmit)
 //            Text("Something went wrong.")
@@ -226,36 +227,37 @@ fun PostDetailBottomBar(modifier: Modifier, post: Post, onCommentSubmit: (Contex
                 .background(MaterialTheme.colorScheme.surfaceVariant),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            OutlinedTextField(
-                value = commentInputText,
-                onValueChange = setCommemtInputText,
-                placeholder = {Text(text = "Write your comments", color=Color.Black)},
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {onSubmit()}
-                ),
-                singleLine = true,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(25),
-                colors = TextFieldDefaults.colors(
-                    Color.Black,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.LightGray,
+            Box(modifier = Modifier.weight(1f)) {
+                OutlinedTextField(
+                    value = commentInputText,
+                    onValueChange = setCommemtInputText,
+                    placeholder = {Text(text = "Write your comments", color=Color.Black)},
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {onSubmit()}
+                    ),
+                    singleLine = true,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(25),
+                    colors = TextFieldDefaults.colors(
+                        Color.Black,
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.LightGray,
+                    )
                 )
-            )
+            }
 //        Spacer(modifier = Modifier)
             IconButton(
-                modifier = Modifier.fillMaxWidth(),
                 onClick = {onSubmit()}
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Send,
                     contentDescription = "Send",
-                    modifier = Modifier.size(200.dp),
+                    modifier = Modifier.size(30.dp),
                     tint = Color.White
                 )
             }
@@ -270,7 +272,7 @@ fun PostDetailBottomBar(modifier: Modifier, post: Post, onCommentSubmit: (Contex
 @Composable
 fun PostDetailScreenPreview() {
     FinalProjectTheme(darkTheme = true) {
-        PostDetailsScreen("TEST_POST_ID",
+        PostDetailsScreen("6mAcX7QrhhdETA5piHvx",
             navController = NavController(LocalContext.current),
 //            CommunityViewModel(SavedStateHandle(), PostServiceTestImpl(), UserServiceImpl())
         )

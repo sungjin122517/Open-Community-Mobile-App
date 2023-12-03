@@ -7,6 +7,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,10 +48,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 //import com.example.finalproject.data.checkSavedPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.data.model.Post
+import com.example.finalproject.data.model.User
 import com.example.finalproject.data.model.fetchPost
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.darkerBackground
@@ -81,9 +85,11 @@ fun PostCard(
     onSaveClicked: (Context, Post, Boolean) -> Unit,
     openPostDetailScreen: (String) -> Unit,
     incrementView: (String) -> Unit,
-    getTimeDifference: (Date, (String) -> Unit) -> Unit
+    getTimeDifference: (Date, (String) -> Unit) -> Unit,
+    isInDetailsScreen: Boolean
 ) {
     Column {
+        val interactionSource = remember { MutableInteractionSource() }
 
         // Define the layout and style of the card
         Card(
@@ -92,10 +98,6 @@ fun PostCard(
     //        elevation = CardDefaults.cardElevation(
     //            defaultElevation = 8.dp
     //        ),
-            onClick = {
-                openPostDetailScreen(post.id)
-                incrementView(post.id)
-            },
             shape = RectangleShape,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
@@ -107,6 +109,15 @@ fun PostCard(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth()
+                    .background(darkBackground)
+                    .clickable (
+                        interactionSource = interactionSource,
+                        indication = null,
+                        onClick = {
+                            openPostDetailScreen(post.id)
+                            incrementView(post.id)
+                        }
+                    )
             ) {
                 // Display Header
                 PostCardHeader(post.id, post.category, post.time.toDate(), navController, getTimeDifference)
@@ -127,8 +138,8 @@ fun PostCard(
                         .padding(bottom = 8.dp)
                         .fillMaxWidth(),
                     color = grey,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    maxLines = if (isInDetailsScreen) Int.MAX_VALUE else 2,
+                    overflow = if (isInDetailsScreen) TextOverflow.Visible else TextOverflow.Ellipsis
                 )
                 PostCardStatus(post, isSaved, onSaveClicked)
 
@@ -260,7 +271,15 @@ fun PostCardStatus(
 }
 
 @Composable
-fun PostDropDownMenu(postId: String, navController: NavController) {
+fun PostDropDownMenu(
+    postId: String,
+    navController: NavController,
+    viewModel: PostViewModel = hiltViewModel()
+    ) {
+
+    val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+    val myPostIds = user.value!!.myPostIds
+
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
 
         var expended by remember {
@@ -290,6 +309,14 @@ fun PostDropDownMenu(postId: String, navController: NavController) {
                 text = { Text("Report") },
                 onClick = { navController.navigate("report_graph/$postId") }
             )
+            if (myPostIds.contains(postId)) {
+                DropdownMenuItem(
+                    text = { Text("Delete") },
+                    onClick = {
+                        viewModel.onDelete(postId)
+                    }
+                )
+            }
         }
     }
 }
@@ -300,7 +327,7 @@ fun PostCardPreview() {
     FinalProjectTheme(darkTheme = true) {
         val post = fetchPost("TEST_POST_ID", LocalContext.current)
 
-        PostCard(modifier = Modifier, post, NavController(LocalContext.current), false,{ c, post, d -> null }, { s ->}, {post}, {d, s -> }
+        PostCard(modifier = Modifier, post, NavController(LocalContext.current), false,{ c, post, d -> null }, { s ->}, {post}, {d, s -> }, false
         )
 
     }

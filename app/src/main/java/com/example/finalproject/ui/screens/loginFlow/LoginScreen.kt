@@ -193,29 +193,29 @@ fun LoginScreen(
                     )
                 }
 
-                Text(
-                    text = "|",
-                    style = TextStyle(
-                        color = grey
-                    ),
-                    modifier = Modifier.padding(horizontal = 8.dp)
-                )
-
-                TextButton(
-                    onClick = navigateToForgotPasswordScreen,
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = grey
-                    )
-                ) {
-                    Text(
-                        text = "Forgot Password",
-                        style = TextStyle(
-//                            fontFamily = FontFamily.Default,
-                            color = grey,
-                            fontSize = 14.sp
-                        )
-                    )
-                }
+//                Text(
+//                    text = "|",
+//                    style = TextStyle(
+//                        color = grey
+//                    ),
+//                    modifier = Modifier.padding(horizontal = 8.dp)
+//                )
+//
+//                TextButton(
+//                    onClick = navigateToForgotPasswordScreen,
+//                    colors = ButtonDefaults.textButtonColors(
+//                        contentColor = grey
+//                    )
+//                ) {
+//                    Text(
+//                        text = "Forgot Password",
+//                        style = TextStyle(
+////                            fontFamily = FontFamily.Default,
+//                            color = grey,
+//                            fontSize = 14.sp
+//                        )
+//                    )
+//                }
             }
 
             Spacer(modifier = Modifier.height(40.dp))
@@ -264,6 +264,7 @@ fun LoginScreen(
 //                    }
 //                }
 //            }
+
         }
     }
 }
@@ -276,90 +277,3 @@ fun LoginScreen(
 
 
 
-
-//@Composable
-//fun EmailTextFieldComponent(onTextChanged: (String) -> Unit) {
-//    val textValue = remember {
-//        mutableStateOf("")
-//    }
-//
-//    OutlinedTextField(
-//        modifier = Modifier
-//            .fillMaxWidth(),
-//        label = { Text(
-//            text = "Email",
-//            color = grey
-//        ) },
-//        value = textValue.value,
-//        keyboardOptions = KeyboardOptions.Default,
-//        onValueChange = {
-//            textValue.value = it
-//            onTextChanged(it)
-//        },
-//        singleLine = true,
-//        colors = TextFieldDefaults.colors(
-//            focusedTextColor = white,
-//            focusedContainerColor = darkBackground,
-//            focusedIndicatorColor = grey,
-//            unfocusedTextColor = white,
-//            unfocusedContainerColor = darkBackground,
-//            unfocusedIndicatorColor = grey,
-//            cursorColor = grey
-//        )
-//    )
-//}
-//@Composable
-//fun PasswordTextFieldComponent(onTextChanged: (String) -> Unit) {
-//    val textValue = remember {
-//        mutableStateOf("")
-//    }
-//
-//    val passwordVisible = remember {
-//        mutableStateOf(false)
-//    }
-//
-//    OutlinedTextField(
-//        modifier = Modifier
-//            .fillMaxWidth(),
-//        label = { Text(
-//            text = "Password",
-//            color = grey
-//        ) },
-//        value = textValue.value,
-//        keyboardOptions = KeyboardOptions.Default,
-//        onValueChange = {
-//            textValue.value = it
-//            onTextChanged(it)
-//        },
-//        singleLine = true,
-//        trailingIcon = {
-//            val iconImage = if (passwordVisible.value) {
-//                Icons.Filled.Visibility
-//            } else {
-//                Icons.Filled.VisibilityOff
-//            }
-//
-//            val description = if (passwordVisible.value) {
-//                "Hide password"
-//            } else {
-//                "Show password"
-//            }
-//
-//            IconButton(onClick = {
-//                passwordVisible.value = !passwordVisible.value
-//            }) {
-//                Icon(imageVector = iconImage, contentDescription = description)
-//            }
-//        },
-//        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-//        colors = TextFieldDefaults.colors(
-//            focusedTextColor = white,
-//            focusedContainerColor = darkBackground,
-//            focusedIndicatorColor = grey,
-//            unfocusedTextColor = white,
-//            unfocusedContainerColor = darkBackground,
-//            unfocusedIndicatorColor = grey,
-//            cursorColor = grey
-//        )
-//    )
-//}

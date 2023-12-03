@@ -1,5 +1,7 @@
 package com.example.finalproject.ui.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -9,8 +11,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.finalproject.data.model.Comment
@@ -26,10 +30,19 @@ import java.util.Date
 */
 @Composable
 fun CommentSection(comments: Array<Comment>, modifier: Modifier) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val interactionSource = remember { MutableInteractionSource() }
 
     if (comments.isNotEmpty()) {
         LazyColumn(
-            modifier = modifier,
+            modifier = modifier
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = {
+                        keyboardController?.hide()
+                    },
+                ),
             contentPadding = PaddingValues(0.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -38,7 +51,14 @@ fun CommentSection(comments: Array<Comment>, modifier: Modifier) {
             }
         }
     } else {
-        Column(modifier = modifier,
+        Column(modifier = modifier
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = {
+                    keyboardController?.hide()
+                },
+            ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
