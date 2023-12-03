@@ -141,6 +141,7 @@ fun EventDetailsScreen(navController: NavHostController, eventViewModel: EventVi
                                 .fillMaxWidth(0.76f)
                                 .height(48.dp),
                             shape = RoundedCornerShape(10.dp),
+                            enabled = (!event.isExpired and event.registerLink.isNotEmpty())
 //                            colors = Color(hexStringToColor(buttonColor(event.category)))
                         ) {
                             Text(
