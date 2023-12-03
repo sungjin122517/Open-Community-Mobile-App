@@ -53,6 +53,7 @@ import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.model.fetchPost
 import com.example.finalproject.ui.theme.darkBackground
+import com.example.finalproject.ui.theme.darkerBackground
 import com.example.finalproject.ui.theme.green
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.pink
@@ -87,7 +88,7 @@ fun PostCard(
         // Define the layout and style of the card
         Card(
             modifier = modifier
-                .fillMaxWidth(),
+                .fillMaxWidth().background(darkerBackground),
     //        elevation = CardDefaults.cardElevation(
     //            defaultElevation = 8.dp
     //        ),
