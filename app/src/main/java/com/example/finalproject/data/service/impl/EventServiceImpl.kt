@@ -27,7 +27,7 @@ class EventServiceImpl @Inject constructor(
         onError: (Throwable) -> Unit,
         eventsSateSetter: (List<Event>) -> Unit
     ) {
-        val query = firestore.collection(EVENT_COLLECTION)
+        val query = firestore.collection(EVENT_TEST_COLLECTION)
                         .whereEqualTo(EVENT_IS_EXPIRED, false)
 //                        .orderBy("eventTime", Query.Direction.DESCENDING)
 
@@ -64,12 +64,13 @@ class EventServiceImpl @Inject constructor(
     }
 
     override fun getEvent(eventId: String): Flow<Event?> =
-        firestore.collection(EVENT_COLLECTION).document(eventId).dataObjects<Event>()
+        firestore.collection(EVENT_TEST_COLLECTION).document(eventId).dataObjects<Event>()
 
     companion object {
         private const val USER_ID_FIELD = "userId"
         private const val USER_COLLECTION = "users"
         private const val EVENT_COLLECTION = "events"
+        private const val EVENT_TEST_COLLECTION = "event_upload_test"
         private const val EVENT_IS_EXPIRED = "isExpired"
     }
 }

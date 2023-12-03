@@ -41,7 +41,7 @@ import com.example.finalproject.ui.theme.white
 import java.text.SimpleDateFormat
 
 @Composable
-fun EventTitle(value: String) {
+fun EventTitle(value: String, isDetail: Boolean = false) {
     Box(modifier = Modifier) {
         Text(
             text = value,
@@ -50,7 +50,7 @@ fun EventTitle(value: String) {
                 .wrapContentHeight(),
             softWrap = true,
             overflow = TextOverflow.Ellipsis,
-            maxLines = 2,
+            maxLines = if (isDetail) 5 else 2,
             style = MaterialTheme.typography.titleSmall
                 .copy(
                     fontFamily = FontFamily.SansSerif,

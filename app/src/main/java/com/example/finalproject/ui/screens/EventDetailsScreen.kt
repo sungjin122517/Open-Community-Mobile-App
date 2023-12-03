@@ -118,7 +118,7 @@ fun EventDetailsScreen(navController: NavHostController, eventViewModel: EventVi
                             .padding(start = 15.dp, end = 15.dp)
                     ) {
                         CategoryButton(value = event.category)
-                        EventTitle(value = event.title)
+                        EventTitle(value = event.title, isDetail = true)
                         CategoryHashtag(event = event)
                         Spacer(modifier = Modifier.height(20.dp))
                         QuickView(event = event)
