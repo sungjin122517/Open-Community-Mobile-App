@@ -47,6 +47,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -130,7 +131,9 @@ fun PostCard(
                     modifier = Modifier
                         .padding(bottom = 8.dp)
                         .fillMaxWidth(),
-                    color = grey
+                    color = grey,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 PostCardStatus(post, isSaved, onSaveClicked)
 
