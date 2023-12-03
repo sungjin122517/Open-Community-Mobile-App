@@ -7,6 +7,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -236,7 +237,9 @@ fun PostDetailBottomBar(modifier: Modifier, post: Post, onCommentSubmit: (Contex
                     onDone = {onSubmit()}
                 ),
                 singleLine = true,
-                modifier = Modifier.padding(10.dp),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
                 shape = RoundedCornerShape(25),
                 colors = TextFieldDefaults.colors(
                     Color.Black,

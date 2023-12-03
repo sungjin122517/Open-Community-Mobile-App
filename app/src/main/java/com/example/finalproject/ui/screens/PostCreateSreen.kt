@@ -2,7 +2,10 @@ package com.example.finalproject.ui.screens
 
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,7 +16,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -38,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +54,7 @@ import androidx.navigation.NavController
 import com.example.finalproject.data.model.PostCategory
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.darkBackground
+import com.example.finalproject.ui.theme.green
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.white
@@ -62,6 +70,9 @@ fun PostCreateScreen(
     var selectedPostCategory by remember { mutableStateOf("") }
     var postTitle by remember { mutableStateOf("") }
     var postContent by remember { mutableStateOf("") }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val interactionSource = remember { MutableInteractionSource() }
 
     Scaffold(
         topBar = {PostCreateTopBar(navController = navController)},
@@ -80,6 +91,15 @@ fun PostCreateScreen(
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize()
+                .background(darkBackground)
+                .verticalScroll(rememberScrollState())
+                .clickable(
+                    interactionSource = interactionSource,
+                    indication = null,
+                    onClick = {
+                        keyboardController?.hide()
+                    },
+                )
         ) {
             Spacer(     // horizontal divisor
                 modifier = Modifier
@@ -102,11 +122,11 @@ fun PostCreateScreen(
                     val selected = (selectedPostCategory == category.value)
                     Button(
                         onClick = {selectedPostCategory = category.value},
-                        border = if (selected) ButtonDefaults.outlinedButtonBorder else null,
+                        border = ButtonDefaults.outlinedButtonBorder,
                         shape = RoundedCornerShape(8),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor =  MaterialTheme.colorScheme.secondary
+                            containerColor = if (selected) grey else Color.Transparent,
+                            contentColor =  if (selected) green else white
                         ),
                         modifier = Modifier.padding(horizontal = 10.dp)
                     ) { Text(text = category.value)}
@@ -123,7 +143,7 @@ fun PostCreateScreen(
             Text(
                 text = "Title: ",
                 fontSize = 16.sp,
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier.padding(10.dp),
             )
             Row(
                 modifier = Modifier
@@ -138,9 +158,13 @@ fun PostCreateScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    )
+                        focusedContainerColor = darkBackground,
+                        unfocusedContainerColor = darkBackground,
+                        unfocusedTextColor = grey,
+                        focusedTextColor = grey,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {keyboardController?.hide()})
                 )
 //                PostCategory.values().forEach { category ->
 //                    Text(text = category.value)
@@ -167,9 +191,13 @@ fun PostCreateScreen(
                         .height(250.dp),
 //                    shape = RoundedCornerShape(5),
                     colors = TextFieldDefaults.colors(
-                        focusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    )
+                        focusedContainerColor = darkBackground,
+                        unfocusedContainerColor = darkBackground,
+                        unfocusedTextColor = grey,
+                        focusedTextColor = grey,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {keyboardController?.hide()})
                 )
 //                PostCategory.values().forEach { category ->
 //                    Text(text = category.value)
@@ -230,7 +258,7 @@ fun PostCreateButton(
 //            .align(Alignment.CenterHorizontally),
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = red,
+            containerColor = green,
             disabledContainerColor = grey
         ),
         enabled = enabled
