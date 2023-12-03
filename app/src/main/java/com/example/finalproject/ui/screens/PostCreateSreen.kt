@@ -223,7 +223,7 @@ fun PostCreateTopBar(navController: NavController) {
         ),
         title = {
             Text(
-                text = "Create Post",
+                text = "New Post",
                 fontSize = 18.sp
             )
         },

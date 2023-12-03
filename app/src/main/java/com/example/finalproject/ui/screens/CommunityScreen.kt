@@ -48,10 +48,10 @@ import com.example.finalproject.ui.components.PostCard
 import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.blue
+import com.example.finalproject.ui.viewModels.PostViewModel
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.white
-import com.example.finalproject.ui.viewModels.CommunityViewModel
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
@@ -61,7 +61,7 @@ import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 @Composable
 fun CommunityScreen(
     navController: NavController,
-    viewModel: CommunityViewModel = hiltViewModel(),
+    viewModel: PostViewModel = hiltViewModel(),
     openPostDetailScreen: (String) -> Unit) {
     /*
     * Features:
@@ -84,6 +84,8 @@ fun CommunityScreen(
     val context = LocalContext.current
     var posts = viewModel.posts.collectAsStateWithLifecycle(initialValue = emptyList())
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+
+    val savedPostIds = user.value!!.savedPostIds
 
     Scaffold (
         modifier = Modifier,
@@ -139,10 +141,11 @@ fun CommunityScreen(
                             Modifier,
                             post = post,
                             navController,
-                            post.id in user.value!!.savedPostIds,
+                            post.id in savedPostIds,
                             viewModel::onSaveClicked,
                             openPostDetailScreen,
-                            viewModel::incrementView
+                            viewModel::incrementView,
+                            viewModel::getTimeDifference
                         )
                     }
                 }

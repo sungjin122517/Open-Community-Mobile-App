@@ -6,8 +6,9 @@ import java.util.Date
 data class Comment(
     val content: String = "",
     val time: Timestamp = Timestamp.now(),
-    val isWriter: Boolean = false,
-    val isDeleted: Boolean = false
+    val sameWriter: Boolean = false,
+    val deleted: Boolean = false,
+    val isTested: Boolean = false
 )
 
 

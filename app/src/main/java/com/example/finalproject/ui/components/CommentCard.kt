@@ -1,6 +1,8 @@
 package com.example.finalproject.ui.components
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -88,7 +90,8 @@ fun CommentCard(comment: Comment) {
                     .fillMaxWidth(),
             ){
                 Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
-                    if (comment.isWriter) {
+                    Log.d(TAG, "Paco: is Writer = ${comment}")
+                    if (comment.sameWriter) {
                         Text(text = "Writer", color = Color.Cyan, fontSize = 16.sp)
                     } else {
                         Text(text = "Anonymous", fontSize = 16.sp)
