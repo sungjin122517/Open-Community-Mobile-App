@@ -59,6 +59,12 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    fun onDelete(postId: String) {
+        viewModelScope.launch {
+            postService.delete(postId)
+        }
+    }
+
     fun getTimeDifference(date: Date, setTimeDiffState: (String) -> Unit) {
         viewModelScope.launch {
             val difference = Date().time - date.time

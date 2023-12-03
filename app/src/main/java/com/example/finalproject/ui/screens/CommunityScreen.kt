@@ -145,7 +145,8 @@ fun CommunityScreen(
                             viewModel::onSaveClicked,
                             openPostDetailScreen,
                             viewModel::incrementView,
-                            viewModel::getTimeDifference
+                            viewModel::getTimeDifference,
+                            false
                         )
                     }
                 }

@@ -337,7 +337,8 @@ fun MyPostList(
                     viewModel::onSaveClicked,
                     openPostDetailScreen,
                     viewModel::incrementView,
-                    viewModel::getTimeDifference
+                    viewModel::getTimeDifference,
+                    false
                 )
 
             }
@@ -386,7 +387,8 @@ fun SavedPostList(
                         viewModel::onSaveClicked,
                         openPostDetailScreen,
                         viewModel::incrementView,
-                        viewModel::getTimeDifference
+                        viewModel::getTimeDifference,
+                        false
                     )
                 }
 
