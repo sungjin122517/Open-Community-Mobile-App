@@ -54,6 +54,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.finalproject.data.Preferences
 import com.example.finalproject.data.model.Post
+import com.example.finalproject.data.model.Response
 import com.example.finalproject.data.model.User
 import com.example.finalproject.ui.components.PostCard
 
@@ -137,25 +138,6 @@ fun RevokeAccess(
         }
     }
 }
-
-//@Composable
-//fun showDialog(context: Context, message: String, onDismiss: () -> Unit) {
-//    AlertDialog(
-//        onDismissRequest = onDismiss,
-//        title = { Text(text = "Revoke Access") },
-//        text = { Text(text = message) },
-//        confirmButton = {
-//            TextButton(onClick = onDismiss) {
-//                Text(text = "Cancel")
-//            }
-//        },
-//        dismissButton = {
-//            TextButton(onClick = { onDismiss() }) {
-//                Text(text = "Sign out")
-//            }
-//        }
-//    )
-//}
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -254,7 +236,7 @@ fun ProfileScreen(
                                 )
                             },
                             onClick = {
-                                viewModel.revokeAccess()
+                                profileViewModel.revokeAccess()
                                 openMenu = !openMenu
                             }
                         )
@@ -323,7 +305,7 @@ fun ProfileScreen(
 
     RevokeAccess(
         signOut = {
-            viewModel.signOut()
+            profileViewModel.signOut()
         }
     )
 }
@@ -354,7 +336,8 @@ fun MyPostList(
                     navController = navController,
                     isSaved = postId in user.value!!.savedPostIds,
                     viewModel::onSaveClicked,
-                    openPostDetailScreen
+                    openPostDetailScreen,
+                    viewModel::incrementView
                 )
 
             }
@@ -399,7 +382,8 @@ fun SavedPostList(
                     navController = navController,
                     isSaved = postId in user.value!!.savedPostIds,
                     viewModel::onSaveClicked,
-                    openPostDetailScreen
+                    openPostDetailScreen,
+                    viewModel::incrementView
                 )
 
             }

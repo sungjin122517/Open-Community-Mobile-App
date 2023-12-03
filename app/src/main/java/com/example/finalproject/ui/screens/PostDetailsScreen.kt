@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -95,7 +96,8 @@ fun PostDetailsScreen(
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
 
     var post = viewModel.fetchPost(postID).collectAsStateWithLifecycle(initialValue = Post())
-    var comments = viewModel.fetchComments(postID).collectAsStateWithLifecycle(initialValue = listOf<Comment>()).value.sortedBy { it.time }
+    var comments = viewModel.fetchComments(postID).collectAsStateWithLifecycle(initialValue = listOf<Comment>())
+        .value.sortedBy { it.time }
 
 //    var comments by remember{ mutableStateOf(listOf<Comment>()) }
 //    LaunchedEffect(postID) {
@@ -149,7 +151,6 @@ fun PostDetailsScreen(
         ) {
             Column(
                 modifier = Modifier
-
                     .padding(it)
                     .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -166,20 +167,20 @@ fun PostDetailsScreen(
                     viewModel.onSaveClicked(context, post_id, b)
 //                    post = viewModel.fetchPost(postID)
                     Log.d(TAG, "Paco: update saveCount: ${post.value?.saveCount}")
-                }, {s ->})
-                Spacer(     // horizontal divisor
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(16.dp)
-                        .background(color = MaterialTheme.colorScheme.background)
-                )
-                Spacer(     // horizontal divisor
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                )
-                CommentSection(comments.value.toTypedArray(),
+                }, {s ->}, {post})
+//                Spacer(     // horizontal divisor
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(16.dp)
+//                        .background(color = MaterialTheme.colorScheme.background)
+//                )
+//                Spacer(     // horizontal divisor
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .height(1.dp)
+//                        .background(color = MaterialTheme.colorScheme.surfaceVariant)
+//                )
+                CommentSection(comments.toTypedArray(),
                     modifier = Modifier.fillMaxHeight()
                     .pullRefresh(state))
 //                PostDetailBottomBar(Modifier.align(Alignment.End),post.value?:Post(), viewModel::onCommentSubmit)
