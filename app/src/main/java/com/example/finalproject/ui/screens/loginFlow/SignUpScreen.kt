@@ -1,5 +1,6 @@
 package com.example.finalproject.ui.screens.loginFlow
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,17 +15,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,6 +51,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.util.Utils.Companion.showMessage
 import com.example.finalproject.data.model.Response.Loading
 import com.example.finalproject.data.model.Response.Success
@@ -52,14 +60,17 @@ import com.example.finalproject.data.model.Response.Failure
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.green
 import com.example.finalproject.ui.theme.grey
+import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.SignUpViewModel
 
 
-@OptIn(ExperimentalComposeUiApi::class)
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
     viewModel: SignUpViewModel = hiltViewModel(),
+    navController: NavHostController
 ) {
     val textFieldColours = TextFieldDefaults.colors(
         focusedTextColor = white,
@@ -77,27 +88,51 @@ fun SignUpScreen(
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
+    var isPasswordValid by remember { mutableStateOf(false) }
+    var isValidLength by remember { mutableStateOf(false) }
 
     var isNameFilled by remember { mutableStateOf(false) }
     var isEmailFilled by remember { mutableStateOf(false) }
     var isPasswordFilled by remember { mutableStateOf(false) }
     var isConfirmPasswordFilled by remember { mutableStateOf(false) }
+//    var isEmailFormatCorrect by remember { mutableStateOf(true) }
 
     val context = LocalContext.current
     val keyboard = LocalSoftwareKeyboardController.current
 
 
-    Surface(
+    Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .background(darkBackground)
-            .padding(20.dp)
+//            .fillMaxSize()
+            .background(darkBackground),
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = darkBackground),
+                title = {
+                    Text(
+                        text = "",
+                        fontSize = 18.sp
+                    )
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            tint = white
+                        )
+                    }
+                },
+            )
+        }
     ) {
         Column (
             modifier = Modifier
                 .fillMaxSize()
                 .background(darkBackground)
+                .padding(20.dp)
         ) {
+            Spacer(modifier = Modifier.height(40.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -148,10 +183,21 @@ fun SignUpScreen(
                 onValueChange = {
                     email = it
                     isEmailFilled = it.isNotEmpty()
+//                    isEmailFormatCorrect = it.endsWith("@connect.ust.hk")
                 },
                 singleLine = true,
                 colors = textFieldColours
             )
+
+//            if(!isEmailFormatCorrect && isEmailFilled) {
+//                Text(
+//                    text = "Please enter a valid HKUST email address",
+//                    color = red,
+//                    modifier = Modifier
+//                        .padding(start = 12.dp, bottom = 3.dp, top = 2.dp),
+//                    fontSize = 14.sp
+//                )
+//            }
 
             // Password
             OutlinedTextField(
@@ -191,6 +237,19 @@ fun SignUpScreen(
                 colors = textFieldColours
             )
 
+            if (password.length in 1..6) {
+                isValidLength = false
+                Text(
+                    text = "Password should be more than 6 characters",
+                    color = red,
+                    modifier = Modifier
+                        .padding(start = 12.dp, bottom = 3.dp, top = 2.dp),
+                    fontSize = 14.sp
+                )
+            } else {
+                isValidLength = true
+            }
+
             // Confirm Password
             OutlinedTextField(
                 modifier = Modifier
@@ -229,19 +288,36 @@ fun SignUpScreen(
                 colors = textFieldColours
             )
 
+            if (password != confirmPassword) {
+                isPasswordValid = false
+                Text(
+                    text = "Passwords do not match",
+                    color = red,
+                    modifier = Modifier
+                        .padding(start = 12.dp, bottom = 3.dp, top = 2.dp),
+                    fontSize = 14.sp
+                )
+            } else {
+                isPasswordValid = true
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
 
             OutlinedButton(
                 onClick = {
                     keyboard?.hide()
-                    viewModel.signUpWithEmailAndPassword(email, password, name)
+                    if(isNameFilled && isEmailFilled && isPasswordFilled && isConfirmPasswordFilled
+                        && isPasswordValid && isValidLength /* && isEmailFormatCorrect  */) {
+                        viewModel.signUpWithEmailAndPassword(email, password, name)
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(48.dp),
                 contentPadding = PaddingValues(),
                 colors = ButtonDefaults.buttonColors(
-                    if(isNameFilled && isEmailFilled && isPasswordFilled && isConfirmPasswordFilled) green else grey
+                    if(isNameFilled && isEmailFilled && isPasswordFilled && isConfirmPasswordFilled
+                         && isPasswordValid && isValidLength /* && isEmailFormatCorrect */ ) green else grey
                 ),
                 shape = RoundedCornerShape(20)
             ) {
@@ -286,5 +362,5 @@ fun SignUpScreen(
 @Preview
 @Composable
 fun SignUpScreenPreview() {
-    SignUpScreen()
+    SignUpScreen(navController = rememberNavController())
 }

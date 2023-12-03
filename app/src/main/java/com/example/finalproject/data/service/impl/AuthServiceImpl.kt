@@ -75,6 +75,11 @@ class AuthServiceImpl @Inject constructor(
     override fun signOut() = auth.signOut()
 
     override suspend fun revokeAccess() = try {
+        // delete account from firebase
+        val userId = auth.currentUser?.uid!!
+        val userRef = FirebaseFirestore.getInstance().collection("users").document(userId)
+        userRef.delete()
+
         auth.currentUser?.delete()?.await()
         Response.Success(true)
     } catch (e: Exception) {

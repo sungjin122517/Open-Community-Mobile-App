@@ -17,8 +17,8 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val repo: AuthService
 ): ViewModel() {
-//    var revokeAccessResponse by mutableStateOf<RevokeAccessResponse>(Success(false))
-//        private set
+    var revokeAccessResponse by mutableStateOf<Response<Boolean>>(Success(false))
+        private set
     var reloadUserResponse by mutableStateOf<Response<Boolean>>(Success(false))
         private set
 
@@ -28,12 +28,13 @@ class ProfileViewModel @Inject constructor(
     }
 
     val isEmailVerified get() = repo.currentUser?.isEmailVerified ?: false
+//    val isEmailVerified get() = true
     val getUserId get() = repo.currentUser?.uid
 
     fun signOut() = repo.signOut()
 
-//    fun revokeAccess() = viewModelScope.launch {
-//        revokeAccessResponse = Loading
-//        revokeAccessResponse = repo.revokeAccess()
-//    }
+    fun revokeAccess() = viewModelScope.launch {
+        revokeAccessResponse = Loading
+        revokeAccessResponse = repo.revokeAccess()
+    }
 }

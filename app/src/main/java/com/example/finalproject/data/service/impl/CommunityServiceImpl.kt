@@ -98,6 +98,12 @@ class CommunityServiceImpl @Inject constructor(
 
     }
 
+    override suspend fun incrementView(post: Post) {
+        firestore.collection(POST_COLLECTION).document(post.id).update(mapOf(
+            "viewCount" to post.viewCount + 1
+        ))
+    }
+
     override suspend fun addReport(postId: String, reportMap: Map<String, Any>) {
         firestore.collection(POST_COLLECTION).document(postId)
             .collection(REPORT_COLLECTION).add(reportMap)
@@ -167,6 +173,10 @@ class CommunityServiceTestImpl @Inject constructor(): CommunityService {
     }
 
     override suspend fun delete(post: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun incrementView(post: Post) {
         TODO("Not yet implemented")
     }
 

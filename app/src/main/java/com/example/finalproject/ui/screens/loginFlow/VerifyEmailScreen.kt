@@ -107,7 +107,7 @@ fun VerifyEmailScreen(
                                     }
                                 }
                             } else {
-                                showMessage(context, "Email not verified message")
+                                showMessage(context, "Email is not verified yet")
                             }
                         }
                     }

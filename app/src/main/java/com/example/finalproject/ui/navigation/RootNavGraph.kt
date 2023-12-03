@@ -31,7 +31,7 @@ fun RootNavigationGraph(
             HomeScreen()
         }
         composable(route = Graph.SIGN_UP) {
-            SignUpScreen()
+            SignUpScreen(navController = navController)
         }
         composable(route = Graph.VERIFY_EMAIL) {
             VerifyEmailScreen(

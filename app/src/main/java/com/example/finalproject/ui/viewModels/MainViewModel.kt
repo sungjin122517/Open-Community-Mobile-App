@@ -37,6 +37,7 @@ class MainViewModel @Inject constructor(
 
     fun getAuthState() = service.getAuthState(viewModelScope)
 
+
     fun storeUserPreference(context: Context) {
         viewModelScope.launch {
             user.collect() {user ->
@@ -49,5 +50,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
 
 }
