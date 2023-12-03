@@ -1,5 +1,7 @@
 package com.example.finalproject.ui.screens
 
+import android.content.Context
+import android.widget.ProgressBar
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,16 +13,20 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -32,18 +38,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.finalproject.data.model.Response
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.ProfileViewModel
+import com.example.finalproject.util.Utils.Companion.showMessage
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun UserGreetings(username: String) {
@@ -73,6 +84,66 @@ fun UserGreetings(username: String) {
         )
     }
 }
+
+
+@Composable
+fun RevokeAccess(
+    viewModel: ProfileViewModel = hiltViewModel(),
+//    scaffoldState: ScaffoldState,
+//    coroutineScope: CoroutineScope,
+    signOut: () -> Unit,
+) {
+    val context = LocalContext.current
+
+//    fun showRevokeAccessMessage() = coroutineScope.launch {
+//        val result = scaffoldState.snackbarHostState.showSnackbar(
+//            message = "You need to re-authenticate before revoking the access.",
+//            actionLabel = "Sign out"
+//        )
+//        if (result == SnackbarResult.ActionPerformed) {
+//            signOut()
+//        }
+//    }
+
+    when(val revokeAccessResponse = viewModel.revokeAccessResponse) {
+        is Response.Loading -> CircularProgressIndicator()
+        is Response.Success -> {
+            val isAccessRevoked = revokeAccessResponse.data
+            LaunchedEffect(isAccessRevoked) {
+                if (isAccessRevoked) {
+                    showMessage(context, "Your access has been revoked.")
+                }
+            }
+        }
+        is Response.Failure -> revokeAccessResponse.apply {
+            LaunchedEffect(e) {
+                print(e)
+                if (e.message == "This operation is sensitive and requires recent authentication. Log in again before retrying this request.") {
+                    signOut()
+                }
+            }
+        }
+    }
+}
+
+//@Composable
+//fun showDialog(context: Context, message: String, onDismiss: () -> Unit) {
+//    AlertDialog(
+//        onDismissRequest = onDismiss,
+//        title = { Text(text = "Revoke Access") },
+//        text = { Text(text = message) },
+//        confirmButton = {
+//            TextButton(onClick = onDismiss) {
+//                Text(text = "Cancel")
+//            }
+//        },
+//        dismissButton = {
+//            TextButton(onClick = { onDismiss() }) {
+//                Text(text = "Sign out")
+//            }
+//        }
+//    )
+//}
 
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -166,16 +237,18 @@ fun ProfileScreen(
                             },
                             colors = MenuDefaults.itemColors(darkBackground)
                         )
-//                        DropdownMenuItem(
-//                            onClick = {
-//                                revokeAccess()
-//                                openMenu = !openMenu
-//                            }
-//                        ) {
-//                            Text(
-//                                text = REVOKE_ACCESS_ITEM
-//                            )
-//                        }
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    text = "Delete Account",
+                                    color = white
+                                )
+                            },
+                            onClick = {
+                                viewModel.revokeAccess()
+                                openMenu = !openMenu
+                            }
+                        )
                     }
                 }
             )
@@ -235,6 +308,12 @@ fun ProfileScreen(
         }
 
     }
+
+    RevokeAccess(
+        signOut = {
+            viewModel.signOut()
+        }
+    )
 }
 
 
