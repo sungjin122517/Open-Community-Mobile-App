@@ -16,7 +16,7 @@ data class Event(
     val uploadTime: Timestamp = Timestamp.now(),
     val isFormal: Boolean = false,
     var isExpired: Boolean = false,
-    val registerLink: String = "www.google.com",
+    val registerLink: String = "",
     val imageURL: String = "https://apru.org/wp-content/uploads/2021/12/HKUST.png"
 
 
