@@ -19,9 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.outlined.AddReaction
 import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material.icons.outlined.LaptopMac
@@ -36,14 +34,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -60,11 +56,10 @@ import com.example.finalproject.ui.theme.green
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.pink
 import com.example.finalproject.ui.theme.white
+import com.example.finalproject.ui.viewModels.PostViewModel
 import java.text.SimpleDateFormat
 
 import java.util.Date
-import java.util.concurrent.TimeUnit
-import kotlin.reflect.KFunction2
 
 val DEFAULT_DATE = Date(0)
 
@@ -83,22 +78,21 @@ fun PostCard(
     isSaved: Boolean,
     onSaveClicked: (Context, Post, Boolean) -> Unit,
     openPostDetailScreen: (String) -> Unit,
-    incrementView: (Post) -> Unit
+    incrementView: (String) -> Unit,
+    getTimeDifference: (Date, (String) -> Unit) -> Unit
 ) {
     Column {
 
         // Define the layout and style of the card
         Card(
             modifier = modifier
-                .fillMaxWidth()
-                .background(darkBackground),
+                .fillMaxWidth(),
     //        elevation = CardDefaults.cardElevation(
     //            defaultElevation = 8.dp
     //        ),
             onClick = {
-//                navController.navigate("post_detail/0")
                 openPostDetailScreen(post.id)
-                incrementView(post)
+                incrementView(post.id)
             },
             shape = RectangleShape,
             colors = CardDefaults.cardColors(
@@ -113,7 +107,7 @@ fun PostCard(
                     .fillMaxWidth()
             ) {
                 // Display Header
-                PostCardHeader(post.id, post.category, post.time.toDate(), navController)
+                PostCardHeader(post.id, post.category, post.time.toDate(), navController, getTimeDifference)
                 // Display the user name and the post time
                 Text(
                     text = post.title,
@@ -148,41 +142,12 @@ fun PostCard(
 
 
 @Composable
-fun PostCardHeader(postId: String, category: String, date: Date, navController: NavController) {
-    val currentDate = remember { Date() }
-    val timeDifference = remember { mutableStateOf("") }
+fun PostCardHeader(postId: String, category: String, date: Date, navController: NavController,
+                   getTimeDifference: (Date, (String) -> Unit) -> Unit) {
+    var timeDifference by remember { mutableStateOf("") }
 
-    LaunchedEffect(date) {
-        val difference = currentDate.time - date.time
-
-        timeDifference.value = when {
-            difference < TimeUnit.MINUTES.toMillis(1) -> "just now"
-            difference < TimeUnit.HOURS.toMillis(1) -> {
-                val minutes = TimeUnit.MILLISECONDS.toMinutes(difference)
-                "$minutes minutes ago"
-            }
-            difference < TimeUnit.DAYS.toMillis(1) -> {
-                val hours = TimeUnit.MILLISECONDS.toHours(difference)
-                "$hours hours ago"
-            }
-            difference < TimeUnit.DAYS.toMillis(7) -> {
-                val days = TimeUnit.MILLISECONDS.toDays(difference)
-                "$days days ago"
-            }
-            difference < TimeUnit.DAYS.toMillis(365) -> {
-                val weeks = TimeUnit.MILLISECONDS.toDays(difference) / 7
-                if (weeks < 4) {
-                    "$weeks weeks ago"
-                } else {
-                    val months = weeks / 4
-                    "$months months ago"
-                }
-            }
-            else -> {
-                val years = TimeUnit.MILLISECONDS.toDays(difference) / 365
-                "$years years ago"
-            }
-        }
+    getTimeDifference(date) {
+        timeDifference = it
     }
 
     Row(
@@ -215,7 +180,7 @@ fun PostCardHeader(postId: String, category: String, date: Date, navController: 
 
         Text(
 //            text = if (date != DEFAULT_DATE) dateFormatter.format(date) else "just now",
-            text = timeDifference.value,
+            text = timeDifference,
             color = grey,
             fontSize = 14.sp
         )
@@ -231,9 +196,6 @@ fun PostCardStatus(
     onSaveClicked: (Context, Post, Boolean) -> Unit
 ) {
     val context = LocalContext.current
-//    val (saveCount, setSaveCount) = remember {
-//        mutableStateOf(post.saveCount)
-//    }
 
     // Display the post stats
     Row(
@@ -243,7 +205,7 @@ fun PostCardStatus(
         horizontalArrangement = Arrangement.SpaceEvenly,
 
         ) {
-        // Display the number of likes
+        // Display the number of views
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -277,7 +239,6 @@ fun PostCardStatus(
             modifier = Modifier.clickable(onClick = {
                 Log.d(TAG, "Paco: Click Saved")
                 onSaveClicked(context, post, isSaved)
-//                if (isSaved) setSaveCount(saveCount-1) else setSaveCount(saveCount+1)
             })
         ) {
             Icon(
@@ -335,7 +296,7 @@ fun PostCardPreview() {
     FinalProjectTheme(darkTheme = true) {
         val post = fetchPost("TEST_POST_ID", LocalContext.current)
 
-        PostCard(modifier = Modifier, post, NavController(LocalContext.current), false,{ c, post, d -> null }, { s ->}, {post}
+        PostCard(modifier = Modifier, post, NavController(LocalContext.current), false,{ c, post, d -> null }, { s ->}, {post}, {d, s -> }
         )
 
     }

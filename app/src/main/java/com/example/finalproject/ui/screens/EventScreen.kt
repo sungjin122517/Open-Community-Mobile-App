@@ -83,14 +83,14 @@ fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
                 .fillMaxSize()
                 .background(darkBackground)
         ){
-            EventHeading()
-            Spacer(     // horizontal divisor
-                modifier = Modifier.imePadding()
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
-            )
-            EventList(events = eventList.toList(), navController, eventViewModel)
+//            EventHeading()
+//            Spacer(     // horizontal divisor
+//                modifier = Modifier.imePadding()
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
+//            )
+//            EventList(events = eventList.toList(), navController, eventViewModel)
             TabRow(
                 selectedTabIndex = selectedTabIndex.value,
                 contentColor = white
@@ -123,8 +123,8 @@ fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
             if (selectedTabIndex.value == 0) {
                 EventList(events = eventList.toList(), navController, eventViewModel)
             } else{
-                var savedEventList = mutableListOf<Event>()
-                savedEventIds.forEach { eventId ->
+                var savedEventList = mutableListOf<Event>()                     // Reversed to make new post on top.
+                savedEventIds.reversed().forEach { eventId ->
                     savedEventList.add(
                         eventViewModel.fetchEvent(eventId).collectAsStateWithLifecycle(
                             initialValue = Event()

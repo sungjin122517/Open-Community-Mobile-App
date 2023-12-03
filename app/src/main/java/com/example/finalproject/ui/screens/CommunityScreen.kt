@@ -52,7 +52,6 @@ import com.example.finalproject.ui.viewModels.PostViewModel
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.white
-import com.example.finalproject.ui.viewModels.CommunityViewModel
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
@@ -145,7 +144,8 @@ fun CommunityScreen(
                             post.id in savedPostIds,
                             viewModel::onSaveClicked,
                             openPostDetailScreen,
-                            viewModel::incrementView
+                            viewModel::incrementView,
+                            viewModel::getTimeDifference
                         )
                     }
                 }

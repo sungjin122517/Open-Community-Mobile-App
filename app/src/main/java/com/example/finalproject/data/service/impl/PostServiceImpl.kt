@@ -79,6 +79,7 @@ class PostServiceImpl @Inject constructor(
             .update(mapOf("deleted" to true)).await()
     }
 
+
     companion object {
         private const val POST_COLLECTION = "posts"
         private const val COMMENT_COLLECTION = "comments"
