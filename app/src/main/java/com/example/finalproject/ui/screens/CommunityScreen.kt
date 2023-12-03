@@ -12,9 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,6 +46,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.data.model.User
 import com.example.finalproject.ui.components.PostCard
 import com.example.finalproject.ui.theme.FinalProjectTheme
+import com.example.finalproject.ui.theme.blue
+import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.CommunityViewModel
@@ -91,7 +98,8 @@ fun CommunityScreen(navController: NavController, viewModel: CommunityViewModel 
                     )
                 }
             )
-        }
+        },
+        floatingActionButton = {AddPostButton(){navController.navigate(Graph.POST_CREATE)}}
     ) { it ->
         Column(modifier = Modifier.padding(it)) {
 
@@ -162,6 +170,21 @@ fun CommunityScreen(navController: NavController, viewModel: CommunityViewModel 
 //fun checkPostFeed(): Boolean {
 //    return true
 //}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun AddPostButton(onClick: () -> Unit) {
+    IconButton(
+        onClick = onClick,
+    ) {
+        Icon(
+            modifier = Modifier.size(150.dp),
+            imageVector = Icons.Filled.AddCircle,
+            contentDescription = "Create Post",
+            tint = blue
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
