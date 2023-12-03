@@ -14,6 +14,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,13 +26,51 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.finalproject.data.model.Comment
 import com.example.finalproject.ui.theme.FinalProjectTheme
+import com.example.finalproject.ui.theme.grey
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.concurrent.TimeUnit
 
 
 //val dateFormatter = SimpleDateFormat("dd/MM/yyyy HH:mm")
 @Composable
 fun CommentCard(comment: Comment) {
+    val currentDate = remember { Date() }
+    val timeDifference = remember { mutableStateOf("") }
+
+    LaunchedEffect(comment.time) {
+        val difference = currentDate.time - comment.time.toDate().time
+
+        timeDifference.value = when {
+            difference < TimeUnit.MINUTES.toMillis(1) -> "just now"
+            difference < TimeUnit.HOURS.toMillis(1) -> {
+                val minutes = TimeUnit.MILLISECONDS.toMinutes(difference)
+                "$minutes minutes ago"
+            }
+            difference < TimeUnit.DAYS.toMillis(1) -> {
+                val hours = TimeUnit.MILLISECONDS.toHours(difference)
+                "$hours hours ago"
+            }
+            difference < TimeUnit.DAYS.toMillis(7) -> {
+                val days = TimeUnit.MILLISECONDS.toDays(difference)
+                "$days days ago"
+            }
+            difference < TimeUnit.DAYS.toMillis(365) -> {
+                val weeks = TimeUnit.MILLISECONDS.toDays(difference) / 7
+                if (weeks < 4) {
+                    "$weeks weeks ago"
+                } else {
+                    val months = weeks / 4
+                    "$months months ago"
+                }
+            }
+            else -> {
+                val years = TimeUnit.MILLISECONDS.toDays(difference) / 365
+                "$years years ago"
+            }
+        }
+    }
+
     Column(modifier = Modifier
         .fillMaxWidth()) {
         Card (
@@ -54,13 +95,13 @@ fun CommentCard(comment: Comment) {
                     }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        dateFormatter.format(comment.time.toDate()),
-                        color = Color.Gray,
+                        text = timeDifference.value,
+                        color = grey,
                         fontSize = 14.sp
                     )
 
                 }
-
+                Spacer(modifier = Modifier.height(8.dp))
                 Text(comment.content)
             }
         }

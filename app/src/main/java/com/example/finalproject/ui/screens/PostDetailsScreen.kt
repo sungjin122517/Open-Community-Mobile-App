@@ -7,27 +7,30 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
+import androidx.compose.material.icons.outlined.ArrowBackIos
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,13 +39,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -53,11 +54,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,7 +68,6 @@ import com.example.finalproject.ui.components.PostCard
 import com.example.finalproject.data.model.Comment
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.model.User
-import com.example.finalproject.data.model.fetchComments
 import com.example.finalproject.data.model.fetchPost
 import com.example.finalproject.data.service.impl.CommunityServiceImpl
 import com.example.finalproject.data.service.impl.CommunityServiceTestImpl
@@ -76,6 +76,7 @@ import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.CommunityViewModel
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
+import kotlinx.coroutines.flow.single
 import java.util.Date
 
 
@@ -94,7 +95,14 @@ fun PostDetailsScreen(
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
 
     var post = viewModel.fetchPost(postID).collectAsStateWithLifecycle(initialValue = Post())
-    var comments = viewModel.fetchComments(postID).collectAsStateWithLifecycle(initialValue = listOf<Comment>())
+    var comments = viewModel.fetchComments(postID).collectAsStateWithLifecycle(initialValue = listOf<Comment>()).value.sortedBy { it.time }
+
+//    var comments by remember{ mutableStateOf(listOf<Comment>()) }
+//    LaunchedEffect(postID) {
+//        comments = viewModel.fetchComments(postID).single().sortedBy { it.time }
+//    }
+
+
 
     Log.d(TAG, "postView fetched: $post")
 //    Log.d(TAG, "postView isSaved: ${postView.isSaved}")
@@ -132,14 +140,19 @@ fun PostDetailsScreen(
     })
 
     Scaffold (
-        modifier = Modifier.imePadding(),
+        modifier = Modifier
+            .systemBarsPadding()
+            .fillMaxSize()
+//            .navigationBarsPadding()
+            .imePadding(),
         topBar = { PostDetailTopBar(navController) },
         bottomBar = {PostDetailBottomBar(post.value?:Post(), viewModel::onCommentSubmit)}
     ) {
         Column(
             modifier = Modifier
-                .padding(it)
+//                .padding()
                 .fillMaxSize(),
+//                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
@@ -150,24 +163,24 @@ fun PostDetailsScreen(
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)
             )
             PostCard(Modifier, post.value?: Post(), navController, post.value?.id in user.value!!.savedPostIds, {
-                context, post_id, b ->
-                    viewModel.onSaveClicked(context, post_id, b)
+                    context, post_id, b ->
+                viewModel.onSaveClicked(context, post_id, b)
 //                    post = viewModel.fetchPost(postID)
                 Log.d(TAG, "Paco: update saveCount: ${post.value?.saveCount}")
-            }, {s ->})
-            Spacer(     // horizontal divisor
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(16.dp)
-                    .background(color = MaterialTheme.colorScheme.background)
-            )
-            Spacer(     // horizontal divisor
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
-            )
-            CommentSection(comments.value.toTypedArray(), modifier = Modifier
+            }, {s ->}, {post})
+//            Spacer(     // horizontal divisor
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(16.dp)
+//                    .background(color = MaterialTheme.colorScheme.background)
+//            )
+//            Spacer(     // horizontal divisor
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(1.dp)
+//                    .background(color = MaterialTheme.colorScheme.surfaceVariant)
+//            )
+            CommentSection(comments.toTypedArray(), modifier = Modifier
                 .pullRefresh(state))
 //            Text("Something went wrong.")
 //            Text("Please try again.")
@@ -179,13 +192,13 @@ fun PostDetailsScreen(
 @Composable
 fun PostDetailTopBar(navController: NavController) {
     TopAppBar(
-        title = { Text(text = "Post Detail", fontSize = 18.sp) },
+        title = { Text(text = "", fontSize = 18.sp) },
         navigationIcon = {
             IconButton(
                 onClick = { navController.navigateUp() }
             ) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.Outlined.ArrowBackIos,
                     contentDescription = "Back",
                     tint = white
                 )

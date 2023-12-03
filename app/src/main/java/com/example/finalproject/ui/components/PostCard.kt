@@ -22,6 +22,10 @@ import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.RemoveRedEye
+import androidx.compose.material.icons.outlined.AddReaction
+import androidx.compose.material.icons.outlined.Comment
+import androidx.compose.material.icons.outlined.LaptopMac
+import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
@@ -32,6 +36,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,26 +50,26 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.datastore.preferences.core.edit
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.finalproject.data.USER_ID
 //import com.example.finalproject.data.checkSavedPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.data.model.Post
-import com.example.finalproject.data.model.PostStatus
 import com.example.finalproject.data.model.fetchPost
-import com.example.finalproject.data.savedPostIDs
-import com.example.finalproject.ui.navigation.Graph
-import kotlinx.coroutines.flow.collect
+import com.example.finalproject.ui.theme.darkBackground
+import com.example.finalproject.ui.theme.green
+import com.example.finalproject.ui.theme.grey
+import com.example.finalproject.ui.theme.pink
+import com.example.finalproject.ui.theme.white
 import java.text.SimpleDateFormat
 
 import java.util.Date
+import java.util.concurrent.TimeUnit
+import kotlin.reflect.KFunction2
 
 val DEFAULT_DATE = Date(0)
 
 @SuppressLint("SimpleDateFormat")
-val dateFormatter = SimpleDateFormat("dd/MM/yyyy HH:mm")
+val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
 
 @SuppressLint("SimpleDateFormat")
 val minutesFormatter = SimpleDateFormat("m")
@@ -77,20 +82,23 @@ fun PostCard(
     navController: NavController,
     isSaved: Boolean,
     onSaveClicked: (Context, Post, Boolean) -> Unit,
-    openPostDetailScreen: (String) -> Unit
+    openPostDetailScreen: (String) -> Unit,
+    incrementView: (Post) -> Unit
 ) {
     Column {
 
         // Define the layout and style of the card
         Card(
             modifier = modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .background(darkBackground),
     //        elevation = CardDefaults.cardElevation(
     //            defaultElevation = 8.dp
     //        ),
             onClick = {
 //                navController.navigate("post_detail/0")
                 openPostDetailScreen(post.id)
+                incrementView(post)
             },
             shape = RectangleShape,
             colors = CardDefaults.cardColors(
@@ -109,9 +117,11 @@ fun PostCard(
                 // Display the user name and the post time
                 Text(
                     text = post.title,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Normal,
                     fontSize = 18.sp,
-                    modifier = Modifier.padding(bottom=8.dp)
+                    modifier = Modifier
+                        .padding(bottom=8.dp),
+                    color = white
                 )
                 // Display the post content
                 Text(
@@ -119,7 +129,8 @@ fun PostCard(
                     fontSize = 16.sp,
                     modifier = Modifier
                         .padding(bottom = 8.dp)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    color = grey
                 )
                 PostCardStatus(post, isSaved, onSaveClicked)
 
@@ -138,16 +149,62 @@ fun PostCard(
 
 @Composable
 fun PostCardHeader(postId: String, category: String, date: Date, navController: NavController) {
+    val currentDate = remember { Date() }
+    val timeDifference = remember { mutableStateOf("") }
+
+    LaunchedEffect(date) {
+        val difference = currentDate.time - date.time
+
+        timeDifference.value = when {
+            difference < TimeUnit.MINUTES.toMillis(1) -> "just now"
+            difference < TimeUnit.HOURS.toMillis(1) -> {
+                val minutes = TimeUnit.MILLISECONDS.toMinutes(difference)
+                "$minutes minutes ago"
+            }
+            difference < TimeUnit.DAYS.toMillis(1) -> {
+                val hours = TimeUnit.MILLISECONDS.toHours(difference)
+                "$hours hours ago"
+            }
+            difference < TimeUnit.DAYS.toMillis(7) -> {
+                val days = TimeUnit.MILLISECONDS.toDays(difference)
+                "$days days ago"
+            }
+            difference < TimeUnit.DAYS.toMillis(365) -> {
+                val weeks = TimeUnit.MILLISECONDS.toDays(difference) / 7
+                if (weeks < 4) {
+                    "$weeks weeks ago"
+                } else {
+                    val months = weeks / 4
+                    "$months months ago"
+                }
+            }
+            else -> {
+                val years = TimeUnit.MILLISECONDS.toDays(difference) / 365
+                "$years years ago"
+            }
+        }
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-
-//                    Icon(
-//                        imageVector = Icon.Default.Favorite,
-//                        contentDescription = "Likes",
-//                        tint = Color.Red
-//                    )
-//        Spacer(modifier = Modifier.width(8.dp))
+        val iconImageVector = if (category == "Just Talk") {
+            Icons.Outlined.AddReaction
+        } else {
+            Icons.Outlined.LaptopMac
+        }
+        val iconTint = if (category == "Just Talk") {
+            green
+        } else {
+            pink
+        }
+        
+        Icon(
+            imageVector = iconImageVector,
+            contentDescription = "Likes",
+            tint = iconTint
+        )
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = category,
             fontWeight = FontWeight.Bold,
@@ -157,8 +214,9 @@ fun PostCardHeader(postId: String, category: String, date: Date, navController: 
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = if (date != DEFAULT_DATE) dateFormatter.format(date) else "just now",
-            color = Color.Gray,
+//            text = if (date != DEFAULT_DATE) dateFormatter.format(date) else "just now",
+            text = timeDifference.value,
+            color = grey,
             fontSize = 14.sp
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -187,7 +245,7 @@ fun PostCardStatus(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.RemoveRedEye,
+                imageVector = Icons.Outlined.RemoveRedEye,
                 contentDescription = "Views"
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -201,7 +259,7 @@ fun PostCardStatus(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
-                imageVector = Icons.Default.Comment,
+                imageVector = Icons.Outlined.Comment,
                 contentDescription = "Comments"
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -273,7 +331,7 @@ fun PostCardPreview() {
     FinalProjectTheme(darkTheme = true) {
         val post = fetchPost("TEST_POST_ID", LocalContext.current)
 
-        PostCard(modifier = Modifier, post, NavController(LocalContext.current), false,{ c, post, d -> null }, {s ->}
+        PostCard(modifier = Modifier, post, NavController(LocalContext.current), false,{ c, post, d -> null }, { s ->}, {post}
         )
 
     }
