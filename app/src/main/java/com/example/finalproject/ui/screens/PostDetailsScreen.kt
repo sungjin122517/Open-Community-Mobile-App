@@ -68,8 +68,6 @@ import com.example.finalproject.data.model.Comment
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.model.User
 import com.example.finalproject.data.model.fetchPost
-import com.example.finalproject.data.service.impl.CommunityServiceImpl
-import com.example.finalproject.data.service.impl.CommunityServiceTestImpl
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.PostViewModel
@@ -156,7 +154,7 @@ fun PostDetailsScreen(
                     viewModel.onSaveClicked(context, post_id, b)
 //                    post = viewModel.fetchPost(postID)
                     Log.d(TAG, "Paco: update saveCount: ${post.value?.saveCount}")
-                }, {s ->}, {post})
+                }, {s ->}, {post},viewModel::getTimeDifference)
 //                Spacer(     // horizontal divisor
 //                    modifier = Modifier
 //                        .fillMaxWidth()
@@ -172,27 +170,7 @@ fun PostDetailsScreen(
                 CommentSection(comments.toTypedArray(),
                     modifier = Modifier.fillMaxHeight()
                     .pullRefresh(state))
-                PostCard(Modifier, post.value?: Post(),
-                    navController, post.value?.id in savedPostIds,
-                    viewModel::onSaveClicked ,{ }
-                )
-                Spacer(     // horizontal divisor
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(16.dp)
-                        .background(color = MaterialTheme.colorScheme.background)
-                )
-                Spacer(     // horizontal divisor
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(1.dp)
-                        .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                )
-                Log.d(TAG, "Paco: comments = ${comments.value}")
-                CommentSection(comments.value.toTypedArray(),
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .pullRefresh(state))
+
 //                PostDetailBottomBar(Modifier.align(Alignment.End),post.value?:Post(), viewModel::onCommentSubmit)
 //            Text("Something went wrong.")
 //            Text("Please try again.")

@@ -18,6 +18,8 @@ import com.google.firebase.firestore.FieldValue
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import java.util.Date
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -49,10 +51,48 @@ class PostViewModel @Inject constructor(
         Log.d(TAG, "Paco: newSaveCount: $newSaveCount")
     }
 
-    fun incrementView(post: Post) {
+    fun incrementView(postId: String) {
         viewModelScope.launch {
-            service.incrementView(post)
+            postService.updatePostField(postId, mapOf(
+                "viewCount" to FieldValue.increment(1)
+            ))
         }
+    }
+
+    fun getTimeDifference(date: Date, setTimeDiffState: (String) -> Unit) {
+        viewModelScope.launch {
+            val difference = Date().time - date.time
+
+            setTimeDiffState(when {
+                difference < TimeUnit.MINUTES.toMillis(1) -> "just now"
+                difference < TimeUnit.HOURS.toMillis(1) -> {
+                    val minutes = TimeUnit.MILLISECONDS.toMinutes(difference)
+                    "$minutes minutes ago"
+                }
+                difference < TimeUnit.DAYS.toMillis(1) -> {
+                    val hours = TimeUnit.MILLISECONDS.toHours(difference)
+                    "$hours hours ago"
+                }
+                difference < TimeUnit.DAYS.toMillis(7) -> {
+                    val days = TimeUnit.MILLISECONDS.toDays(difference)
+                    "$days days ago"
+                }
+                difference < TimeUnit.DAYS.toMillis(365) -> {
+                    val weeks = TimeUnit.MILLISECONDS.toDays(difference) / 7
+                    if (weeks < 4) {
+                        "$weeks weeks ago"
+                    } else {
+                        val months = weeks / 4
+                        "$months months ago"
+                    }
+                }
+                else -> {
+                    val years = TimeUnit.MILLISECONDS.toDays(difference) / 365
+                    "$years years ago"
+                }
+            })
+        }
+
     }
 
 
