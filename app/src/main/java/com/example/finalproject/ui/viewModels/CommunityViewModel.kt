@@ -43,10 +43,6 @@ class CommunityViewModel @Inject constructor(
         return service.getPostComment(postId)
     }
 
-//    fun fetchPost(userId: String):  Flow<List<Post>> {
-//        return service.getPosts(postId)
-//    }
-
 
     fun updateSaveCount(postId: String, newSaveCount: Int) {
         val updateMap = hashMapOf<String, Int>(
@@ -56,6 +52,12 @@ class CommunityViewModel @Inject constructor(
             service.updatePostField(postId, updateMap)
         }
         Log.d(TAG, "Paco: newSaveCount: $newSaveCount")
+    }
+
+    fun incrementView(post: Post) {
+        viewModelScope.launch {
+            service.incrementView(post)
+        }
     }
 
 
