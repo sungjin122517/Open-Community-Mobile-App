@@ -10,6 +10,7 @@ import com.example.finalproject.ui.components.BottomBarScreen
 import com.example.finalproject.ui.screens.CommunityScreen
 import com.example.finalproject.ui.screens.EventDetailsScreen
 import com.example.finalproject.ui.screens.EventScreen
+import com.example.finalproject.ui.screens.PostCreateScreen
 import com.example.finalproject.ui.screens.PostDetailsScreen
 import com.example.finalproject.ui.screens.ProfileScreen
 import com.example.finalproject.ui.screens.ReportScreen
@@ -84,6 +85,9 @@ fun HomeNavGraph(
             } else {
                 navController.navigateUp()
             }
+        }
+        composable(Graph.POST_CREATE) { navBackStackEntry ->
+            PostCreateScreen(navController = navController, onPostCreate = communityViewModel::onPostCreate)
         }
     }
 }

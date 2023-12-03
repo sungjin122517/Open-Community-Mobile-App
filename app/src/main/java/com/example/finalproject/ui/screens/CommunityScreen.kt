@@ -12,9 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -35,7 +40,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.data.model.User
 import com.example.finalproject.ui.components.PostCard
+import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.theme.FinalProjectTheme
+import com.example.finalproject.ui.theme.blue
+import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.viewModels.CommunityViewModel
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -72,12 +80,14 @@ fun CommunityScreen(
 
     Scaffold (
         modifier = Modifier,
-        topBar = {TopAppBar(title = {Text("Community")})}
+        topBar = {TopAppBar(title = {Text("Community")})},
+        floatingActionButton = {AddPostButton(){navController.navigate(Graph.POST_CREATE)}}
     ) { it ->
         Column(modifier = Modifier.padding(it)) {
 
             Spacer(     // horizontal divisor
-                modifier = Modifier.imePadding()
+                modifier = Modifier
+                    .imePadding()
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)
@@ -144,10 +154,16 @@ fun CommunityScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CommunityTopBar() {
-    Column {
-
-
+fun AddPostButton(onClick: () -> Unit) {
+    IconButton(
+        onClick = onClick,
+    ) {
+        Icon(
+            modifier = Modifier.size(150.dp),
+            imageVector = Icons.Filled.AddCircle,
+            contentDescription = "Create Post",
+            tint = blue
+        )
     }
 }
 

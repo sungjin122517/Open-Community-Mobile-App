@@ -28,8 +28,7 @@ fun CommentSection(comments: Array<Comment>, modifier: Modifier) {
 
     if (comments.isNotEmpty()) {
         LazyColumn(
-            modifier = modifier
-                .fillMaxSize(),
+            modifier = modifier,
             contentPadding = PaddingValues(0.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -42,8 +41,7 @@ fun CommentSection(comments: Array<Comment>, modifier: Modifier) {
             }
         }
     } else {
-        Column(modifier = Modifier
-            .fillMaxSize(),
+        Column(modifier = Modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
