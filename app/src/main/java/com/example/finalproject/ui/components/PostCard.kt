@@ -231,6 +231,9 @@ fun PostCardStatus(
     onSaveClicked: (Context, Post, Boolean) -> Unit
 ) {
     val context = LocalContext.current
+//    val (saveCount, setSaveCount) = remember {
+//        mutableStateOf(post.saveCount)
+//    }
 
     // Display the post stats
     Row(
@@ -274,11 +277,12 @@ fun PostCardStatus(
             modifier = Modifier.clickable(onClick = {
                 Log.d(TAG, "Paco: Click Saved")
                 onSaveClicked(context, post, isSaved)
+//                if (isSaved) setSaveCount(saveCount-1) else setSaveCount(saveCount+1)
             })
         ) {
             Icon(
                 imageVector = if (isSaved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
-                contentDescription = "Comments"
+                contentDescription = "Save Post"
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(

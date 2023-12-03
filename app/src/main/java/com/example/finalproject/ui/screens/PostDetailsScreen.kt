@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -61,7 +60,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.finalproject.ui.components.CommentSection
@@ -74,7 +72,7 @@ import com.example.finalproject.data.service.impl.CommunityServiceImpl
 import com.example.finalproject.data.service.impl.CommunityServiceTestImpl
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.white
-import com.example.finalproject.ui.viewModels.CommunityViewModel
+import com.example.finalproject.ui.viewModels.PostViewModel
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
 import kotlinx.coroutines.flow.single
@@ -83,29 +81,22 @@ import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @Composable
 fun PostDetailsScreen(
     postID: String,
     navController: NavController,
-    viewModel: CommunityViewModel = hiltViewModel()
+    viewModel: PostViewModel = hiltViewModel()
 ) {
     Log.d(TAG, "Paco: rendering post Detail: $postID")
     // TODO: Obtain comments given post id
     val context = LocalContext.current
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+    val savedPostIds = user.value!!.savedPostIds
 
     var post = viewModel.fetchPost(postID).collectAsStateWithLifecycle(initialValue = Post())
     var comments = viewModel.fetchComments(postID).collectAsStateWithLifecycle(initialValue = listOf<Comment>())
         .value.sortedBy { it.time }
-
-//    var comments by remember{ mutableStateOf(listOf<Comment>()) }
-//    LaunchedEffect(postID) {
-//        comments = viewModel.fetchComments(postID).single().sortedBy { it.time }
-//    }
-
-
-
     Log.d(TAG, "postView fetched: $post")
 //    Log.d(TAG, "postView isSaved: ${postView.isSaved}")
 
@@ -142,12 +133,10 @@ fun PostDetailsScreen(
     })
 //    Column (modifier = Modifier.fillMaxSize()) {
 
-
         Scaffold (
             modifier = Modifier.imePadding(),
             topBar = { PostDetailTopBar(navController) },
         bottomBar = {PostDetailBottomBar(Modifier,post.value?:Post(), viewModel::onCommentSubmit)}
-
         ) {
             Column(
                 modifier = Modifier
@@ -183,8 +172,28 @@ fun PostDetailsScreen(
                 CommentSection(comments.toTypedArray(),
                     modifier = Modifier.fillMaxHeight()
                     .pullRefresh(state))
+                PostCard(Modifier, post.value?: Post(),
+                    navController, post.value?.id in savedPostIds,
+                    viewModel::onSaveClicked ,{ }
+                )
+                Spacer(     // horizontal divisor
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(16.dp)
+                        .background(color = MaterialTheme.colorScheme.background)
+                )
+                Spacer(     // horizontal divisor
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(color = MaterialTheme.colorScheme.surfaceVariant)
+                )
+                Log.d(TAG, "Paco: comments = ${comments.value}")
+                CommentSection(comments.value.toTypedArray(),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .pullRefresh(state))
 //                PostDetailBottomBar(Modifier.align(Alignment.End),post.value?:Post(), viewModel::onCommentSubmit)
-
 //            Text("Something went wrong.")
 //            Text("Please try again.")
             }
@@ -282,7 +291,7 @@ fun PostDetailScreenPreview() {
     FinalProjectTheme(darkTheme = true) {
         PostDetailsScreen("TEST_POST_ID",
             navController = NavController(LocalContext.current),
-            CommunityViewModel(SavedStateHandle(), CommunityServiceTestImpl())
+//            CommunityViewModel(SavedStateHandle(), PostServiceTestImpl(), UserServiceImpl())
         )
     }
 }

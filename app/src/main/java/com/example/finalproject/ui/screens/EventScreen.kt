@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -44,6 +45,7 @@ import com.example.finalproject.ui.components.EventHashTag
 import com.example.finalproject.ui.components.EventPhoto
 import com.example.finalproject.ui.components.EventTitle
 import com.example.finalproject.data.model.Event
+import com.example.finalproject.data.model.User
 import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.darkBackground
@@ -55,12 +57,26 @@ import com.example.finalproject.ui.viewModels.EventViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
-//    val eventList = eventViewModel.fetchEvents() ?: mutableListOf<Event>()
     val eventList = eventViewModel.eventList
+    val user = eventViewModel.user
+    val savedEventIds = user.savedEventIds
+
+    var selectedTabIndex = remember { mutableIntStateOf(0) }
+
+//    val scaffoldState = rememberScaffoldState()
+    val tabItems = listOf(
+        TabItem(title = "Featured"),
+        TabItem(title = "Saved")
+    )
+    var pagerState = rememberPagerState {
+        tabItems.size
+    }
+//    val eventList = eventViewModel.fetchEvents() ?: mutableListOf<Event>()
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .background(darkBackground),
+            .background(darkBackground)
     ) {
         Column (
             modifier = Modifier
@@ -75,6 +91,60 @@ fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)
             )
             EventList(events = eventList.toList(), navController, eventViewModel)
+            TabRow(
+                selectedTabIndex = selectedTabIndex.value,
+                contentColor = white
+            ) {
+                val isSelected =
+                tabItems.forEachIndexed { index, item ->
+                    Tab(
+                        selected = selectedTabIndex.value == index,
+                        onClick = { selectedTabIndex.value = index },
+                        modifier = Modifier.background(darkerBackground),
+                        text = {
+                            Text(
+                                text = item.title,
+                                fontWeight = if (selectedTabIndex.value == index) FontWeight.Bold else FontWeight.Light,
+                            )
+                        },
+//                        selectedContentColor = white
+                    )
+                }
+            }
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f)
+                ) {
+
+            }
+
+            if (selectedTabIndex.value == 0) {
+                EventList(events = eventList.toList(), navController, eventViewModel)
+            } else{
+                var savedEventList = mutableListOf<Event>()
+                savedEventIds.forEach { eventId ->
+                    savedEventList.add(
+                        eventViewModel.fetchEvent(eventId).collectAsStateWithLifecycle(
+                            initialValue = Event()
+                        ).value ?: Event()
+                    )
+                }
+                EventList(events = savedEventList.toList(), navController, eventViewModel)
+
+            }
+
+//            EventList(events = eventList.toList(), navController, eventViewModel)
+
+//            Divider(
+//                modifier = Modifier,
+//                color = ApdiColors.lineGrey,
+//                height = 0.dp,
+//                thickness = 1.dp,
+//                startIndent = 0.dp,
+//                endIndent = 0.dp
+//            )
         }
     }
 }

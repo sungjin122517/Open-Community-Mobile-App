@@ -2,10 +2,14 @@ package com.example.finalproject.data.service.impl
 
 import com.example.finalproject.data.service.AuthService
 import com.example.finalproject.data.model.Response
+import com.example.finalproject.data.model.User
+//import com.example.finalproject.data.utils.await
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.dataObjects
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.stateIn
@@ -96,7 +100,10 @@ class AuthServiceImpl @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), auth.currentUser == null)
 
+
+
 //    override fun firebaseCreateUser(email: String, username: String): Response<Boolean> = try{
 //
 //    }
+
 }

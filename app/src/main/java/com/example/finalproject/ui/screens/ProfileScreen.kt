@@ -33,10 +33,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -62,7 +60,7 @@ import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.white
-import com.example.finalproject.ui.viewModels.CommunityViewModel
+import com.example.finalproject.ui.viewModels.PostViewModel
 import com.example.finalproject.ui.viewModels.ProfileViewModel
 import com.example.finalproject.util.Utils.Companion.showMessage
 import com.google.firebase.firestore.FirebaseFirestore
@@ -145,7 +143,7 @@ fun RevokeAccess(
 fun ProfileScreen(
     navController: NavController,
     profileViewModel: ProfileViewModel = hiltViewModel(),
-    communityViewModel: CommunityViewModel = hiltViewModel(),
+    postViewModel: PostViewModel = hiltViewModel(),
     openPostDetailScreen: (String) -> Unit
 ) {
     val context = LocalContext.current
@@ -268,7 +266,7 @@ fun ProfileScreen(
             }
             when (selectedTabIndex.value) {
                 0 -> {
-                    MyPostList(navController = navController, viewModel = communityViewModel, openPostDetailScreen = openPostDetailScreen)
+                    MyPostList(navController = navController, viewModel = postViewModel, openPostDetailScreen = openPostDetailScreen)
 
                     //                    Column (
 //                        modifier = Modifier
@@ -284,7 +282,7 @@ fun ProfileScreen(
 //                    }
                 }
                 1 -> {
-                    SavedPostList(navController = navController, viewModel = communityViewModel, openPostDetailScreen = openPostDetailScreen)
+                    SavedPostList(navController = navController, viewModel = postViewModel, openPostDetailScreen = openPostDetailScreen)
 //                    Column (
 //                        modifier = Modifier
 //                            .fillMaxSize()
@@ -313,7 +311,7 @@ fun ProfileScreen(
 @Composable
 fun MyPostList(
     modifier: Modifier = Modifier,
-    viewModel: CommunityViewModel = hiltViewModel(),
+    viewModel: PostViewModel = hiltViewModel(),
     navController: NavController,
     openPostDetailScreen: (String) -> Unit
 ) {
@@ -328,7 +326,7 @@ fun MyPostList(
         LazyColumn(modifier = modifier.fillMaxSize(),
 //            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
-            items(myPostIds) {postId ->
+            items(myPostIds.reversed()) {postId ->
                 val post = viewModel.fetchPost(postId).collectAsStateWithLifecycle(initialValue = Post())
                 PostCard(
                     Modifier,
@@ -359,7 +357,7 @@ fun MyPostList(
 @Composable
 fun SavedPostList(
     modifier: Modifier = Modifier,
-    viewModel: CommunityViewModel = hiltViewModel(),
+    viewModel: PostViewModel = hiltViewModel(),
     navController: NavController,
     openPostDetailScreen: (String) -> Unit
 ) {
@@ -374,17 +372,21 @@ fun SavedPostList(
         LazyColumn(modifier = modifier.fillMaxSize(),
 //            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
-            items(savedPostIds) {postId ->
+            items(savedPostIds.reversed()) {postId ->
                 val post = viewModel.fetchPost(postId).collectAsStateWithLifecycle(initialValue = Post())
-                PostCard(
-                    Modifier,
-                    post = post.value?: Post(),
-                    navController = navController,
-                    isSaved = postId in user.value!!.savedPostIds,
-                    viewModel::onSaveClicked,
-                    openPostDetailScreen,
-                    viewModel::incrementView
-                )
+                val isDeleted = post.value?.deleted ?: false
+                if (post.value?.deleted == false) {
+                    PostCard(
+                        Modifier,
+                        post = post.value?: Post(),
+                        navController = navController,
+                        isSaved = postId in user.value!!.savedPostIds,
+                        viewModel::onSaveClicked,
+                        openPostDetailScreen
+                        viewModel::incrementView
+                    )
+                }
+
 
             }
         }

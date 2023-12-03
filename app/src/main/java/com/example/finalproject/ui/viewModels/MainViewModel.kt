@@ -9,17 +9,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.finalproject.data.Preferences
 import com.example.finalproject.data.model.User
 import com.example.finalproject.data.service.AuthService
-import com.example.finalproject.data.service.impl.CommunityServiceImpl
 import com.example.finalproject.data.userPreferences
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.dataObjects
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 @HiltViewModel

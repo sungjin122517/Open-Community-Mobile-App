@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
-    private val repo: AuthService
+    private val service: AuthService
 ): ViewModel() {
     var signUpResponse by mutableStateOf<Response<Boolean>>(Success(false))
         private set
@@ -34,11 +34,11 @@ class SignUpViewModel @Inject constructor(
 
     fun signUpWithEmailAndPassword(email: String, password: String, username: String) = viewModelScope.launch {
         signUpResponse = Loading
-        signUpResponse = repo.firebaseSignUpWithEmailAndPassword(email, password, username)
+        signUpResponse = service.firebaseSignUpWithEmailAndPassword(email, password, username)
     }
 
     fun sendEmailVerification() = viewModelScope.launch {
         sendEmailVerificationResponse = Loading
-        sendEmailVerificationResponse = repo.sendEmailVerification()
+        sendEmailVerificationResponse = service.sendEmailVerification()
     }
 }

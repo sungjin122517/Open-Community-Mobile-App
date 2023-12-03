@@ -44,7 +44,6 @@ import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.white
-import com.example.finalproject.ui.viewModels.CommunityViewModel
 
 val REPORT_TYPE_LIST = listOf(
     "Spam",

@@ -5,12 +5,13 @@ import android.util.Log
 import com.example.finalproject.data.model.Event
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.service.EventService
-import com.example.finalproject.data.utils.await
+//import com.example.finalproject.data.utils.await
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.dataObjects
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -61,6 +62,9 @@ class EventServiceImpl @Inject constructor(
 //
         return events.values.toMutableList()
     }
+
+    override fun getEvent(eventId: String): Flow<Event?> =
+        firestore.collection(EVENT_COLLECTION).document(eventId).dataObjects<Event>()
 
     companion object {
         private const val USER_ID_FIELD = "userId"
