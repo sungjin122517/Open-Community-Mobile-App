@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -35,6 +36,7 @@ import com.example.finalproject.ui.components.EventHashTag
 import com.example.finalproject.ui.components.EventPhoto
 import com.example.finalproject.ui.components.EventTitle
 import com.example.finalproject.data.model.Event
+import com.example.finalproject.data.model.User
 import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.darkBackground
@@ -45,17 +47,22 @@ import com.example.finalproject.ui.viewModels.EventViewModel
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
+    val eventList = eventViewModel.eventList
+    val user = eventViewModel.user
+    val savedEventIds = user.savedEventIds
+
     var selectedTabIndex = remember { mutableIntStateOf(0) }
+
 //    val scaffoldState = rememberScaffoldState()
     val tabItems = listOf(
-        TabItem(title = "Formal"),
-        TabItem(title = "Casual")
+        TabItem(title = "Featured"),
+        TabItem(title = "Saved")
     )
     var pagerState = rememberPagerState {
         tabItems.size
     }
 //    val eventList = eventViewModel.fetchEvents() ?: mutableListOf<Event>()
-    val eventList = eventViewModel.eventList
+
     Surface(
         modifier = Modifier
             .fillMaxSize()
@@ -91,10 +98,26 @@ fun EventScreen(navController: NavController, eventViewModel: EventViewModel) {
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f)
-                ) {index ->
+                ) {
+
             }
 
-            EventList(events = eventList.toList(), navController, eventViewModel)
+            if (selectedTabIndex.value == 0) {
+                EventList(events = eventList.toList(), navController, eventViewModel)
+            } else{
+                var savedEventList = mutableListOf<Event>()
+                savedEventIds.forEach { eventId ->
+                    savedEventList.add(
+                        eventViewModel.fetchEvent(eventId).collectAsStateWithLifecycle(
+                            initialValue = Event()
+                        ).value ?: Event()
+                    )
+                }
+                EventList(events = savedEventList.toList(), navController, eventViewModel)
+
+            }
+
+//            EventList(events = eventList.toList(), navController, eventViewModel)
 
 //            Divider(
 //                modifier = Modifier,

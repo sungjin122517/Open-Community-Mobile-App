@@ -1,8 +1,10 @@
 package com.example.finalproject.data.service
 
 import com.example.finalproject.data.model.Response
+import com.example.finalproject.data.model.User
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface AuthService {
@@ -19,6 +21,7 @@ interface AuthService {
     fun signOut()
     suspend fun revokeAccess(): Response<Boolean>
     fun getAuthState(viewModelScope: CoroutineScope): StateFlow<Boolean>
+
 
 //    fun firebaseCreateUser(email: String, username: String): Response<Boolean>
 }

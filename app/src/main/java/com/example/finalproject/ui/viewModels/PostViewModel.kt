@@ -5,14 +5,14 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.util.Log
 import androidx.datastore.preferences.core.edit
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.finalproject.data.Preferences
 import com.example.finalproject.data.model.Comment
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.savedPostIDs
-import com.example.finalproject.data.service.CommunityService
+import com.example.finalproject.data.service.PostService
+import com.example.finalproject.data.service.UserService
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,26 +21,21 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CommunityViewModel @Inject constructor(
-    private val state: SavedStateHandle,
-    private val service: CommunityService
+class PostViewModel @Inject constructor(
+    private val postService: PostService,
+    private val userService: UserService
 ): ViewModel() {
-    var posts = service.posts
-    var user = service.user
-//    var post: Flow<Post?> get() = viewModelScope.launch {
-//        service.getPost()
-//    }
+    var posts = postService.posts
+    var user = userService.user
 
-
-
-    var savedPOstIds = mutableSetOf<String>()
+    private var savedPostIds = mutableSetOf<String>()
 
     fun fetchPost(postId: String): Flow<Post?> {
-        return service.getPost(postId)
+        return postService.getPost(postId)
     }
 
     fun fetchComments(postId: String): Flow<List<Comment>> {
-        return service.getPostComment(postId)
+        return postService.getPostComment(postId)
     }
 
 //    fun fetchPost(userId: String):  Flow<List<Post>> {
@@ -53,7 +48,7 @@ class CommunityViewModel @Inject constructor(
             "saveCount" to newSaveCount,
         )
         viewModelScope.launch() {
-            service.updatePostField(postId, updateMap)
+            postService.updatePostField(postId, updateMap)
         }
         Log.d(TAG, "Paco: newSaveCount: $newSaveCount")
     }
@@ -62,12 +57,7 @@ class CommunityViewModel @Inject constructor(
         val updateMap = hashMapOf(
             "savedPostIds" to newFieldValue,
         )
-        service.updateUserField(updateMap)
-    }
-
-    fun onPostClicked(postId: String, openPostDetailScreen: (String) -> Unit) {
-        state["post_id"] = postId
-        openPostDetailScreen(postId)
+        userService.updateUserField(updateMap)
     }
 
     fun onPostCreate(context: Context, category: String, title: String, content: String) {
@@ -82,7 +72,10 @@ class CommunityViewModel @Inject constructor(
 
             Log.d(TAG, "Paco: create Post = $post")
             viewModelScope.launch {
-                service.createPost(post)
+                postService.createPost(post).addOnSuccessListener { postRef ->
+                    userService.addMyPostId(postRef.id)
+
+                }
             }
         }
     }
@@ -94,11 +87,11 @@ class CommunityViewModel @Inject constructor(
                 "writerId" to userId!!,
                 "content" to commentText,
                 "time" to Timestamp.now(),
-                "isWriter" to (userId == post.writerId),
-                "isDeleted" to false
+                "sameWriter" to (userId == post.writerId),
+                "deleted" to false
             )
             viewModelScope.launch {
-                service.addComment(post, report)
+                postService.addComment(post, report)
             }
         }
     }
@@ -112,7 +105,7 @@ class CommunityViewModel @Inject constructor(
                 "submitDateTime" to Timestamp.now()
             )
             viewModelScope.launch {
-                service.addReport(postId, report)
+                postService.addReport(postId, report)
             }
         }
     }
@@ -121,11 +114,11 @@ class CommunityViewModel @Inject constructor(
         Log.d(TAG, "Paco: onSave before ${post.id}, is saved=$isSaved")
         viewModelScope.launch {
             if (isSaved) {
-                savedPOstIds.remove(post.id)
+                savedPostIds.remove(post.id)
                 updateSavePostIds(FieldValue.arrayRemove(post.id))
                 updateSaveCount(post.id, post.saveCount-1)
             } else {
-                savedPOstIds.add(post.id)
+                savedPostIds.add(post.id)
                 updateSavePostIds(FieldValue.arrayUnion(post.id))
                 updateSaveCount(post.id, post.saveCount+1)
             }
@@ -143,17 +136,17 @@ class CommunityViewModel @Inject constructor(
         Log.d(TAG, "Paco: fetchAndStoreSavedPostIds")
         viewModelScope.launch() {
             context.savedPostIDs.edit { it.clear() }
-            service.user.collect { user ->
+            userService.user.collect { user ->
                 Log.d(TAG, "Paco: collect user")
                 val savedPostsId = user?.savedPostIds
                 if (savedPostsId != null) {
                     for (postId in savedPostsId) {
                         Log.d(TAG, "Paco: save $postId")
-                        savedPOstIds.add(postId)
+                        savedPostIds.add(postId)
 //                        storeSavedPostId(context, postId, true)
                     }
                 }
-                Log.d(TAG, "Paco: fetch and store: ${savedPOstIds.toList()}")
+                Log.d(TAG, "Paco: fetch and store Post = ${savedPostIds.toList()}")
             }
 //            sharedPref.edit()
 //                .putStringSet("savedPostIds", savedPOstIds)

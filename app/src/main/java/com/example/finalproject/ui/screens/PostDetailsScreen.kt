@@ -7,14 +7,12 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
@@ -27,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.rounded.Send
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,13 +33,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,9 +51,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.finalproject.ui.components.CommentSection
@@ -67,31 +59,26 @@ import com.example.finalproject.ui.components.PostCard
 import com.example.finalproject.data.model.Comment
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.model.User
-import com.example.finalproject.data.model.fetchComments
-import com.example.finalproject.data.model.fetchPost
-import com.example.finalproject.data.service.impl.CommunityServiceImpl
-import com.example.finalproject.data.service.impl.CommunityServiceTestImpl
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.white
-import com.example.finalproject.ui.viewModels.CommunityViewModel
+import com.example.finalproject.ui.viewModels.PostViewModel
 import eu.bambooapps.material3.pullrefresh.pullRefresh
 import eu.bambooapps.material3.pullrefresh.rememberPullRefreshState
-import java.util.Date
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "SuspiciousIndentation")
 @Composable
 fun PostDetailsScreen(
     postID: String,
     navController: NavController,
-    viewModel: CommunityViewModel = hiltViewModel()
+    viewModel: PostViewModel = hiltViewModel()
 ) {
     Log.d(TAG, "Paco: rendering post Detail: $postID")
     // TODO: Obtain comments given post id
     val context = LocalContext.current
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+    val savedPostIds = user.value!!.savedPostIds
 
     var post = viewModel.fetchPost(postID).collectAsStateWithLifecycle(initialValue = Post())
     var comments = viewModel.fetchComments(postID).collectAsStateWithLifecycle(initialValue = listOf<Comment>())
@@ -150,12 +137,10 @@ fun PostDetailsScreen(
                         .height(1.dp)
                         .background(color = MaterialTheme.colorScheme.surfaceVariant)
                 )
-                PostCard(Modifier, post.value?: Post(), navController, post.value?.id in user.value!!.savedPostIds, {
-                        context, post_id, b ->
-                    viewModel.onSaveClicked(context, post_id, b)
-//                    post = viewModel.fetchPost(postID)
-                    Log.d(TAG, "Paco: update saveCount: ${post.value?.saveCount}")
-                }, {s ->})
+                PostCard(Modifier, post.value?: Post(),
+                    navController, post.value?.id in savedPostIds,
+                    viewModel::onSaveClicked ,{ }
+                )
                 Spacer(     // horizontal divisor
                     modifier = Modifier
                         .fillMaxWidth()
@@ -168,9 +153,11 @@ fun PostDetailsScreen(
                         .height(1.dp)
                         .background(color = MaterialTheme.colorScheme.surfaceVariant)
                 )
+                Log.d(TAG, "Paco: comments = ${comments.value}")
                 CommentSection(comments.value.toTypedArray(),
-                    modifier = Modifier.fillMaxHeight()
-                    .pullRefresh(state))
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .pullRefresh(state))
 //                PostDetailBottomBar(Modifier.align(Alignment.End),post.value?:Post(), viewModel::onCommentSubmit)
 //            Text("Something went wrong.")
 //            Text("Please try again.")
@@ -269,7 +256,7 @@ fun PostDetailScreenPreview() {
     FinalProjectTheme(darkTheme = true) {
         PostDetailsScreen("TEST_POST_ID",
             navController = NavController(LocalContext.current),
-            CommunityViewModel(SavedStateHandle(), CommunityServiceTestImpl())
+//            CommunityViewModel(SavedStateHandle(), PostServiceTestImpl(), UserServiceImpl())
         )
     }
 }
