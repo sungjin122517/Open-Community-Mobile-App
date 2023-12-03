@@ -48,8 +48,6 @@ import com.example.finalproject.ui.components.PostCard
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.blue
 import com.example.finalproject.ui.theme.red
-import com.example.finalproject.ui.theme.darkBackground
-import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.CommunityViewModel
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -83,22 +81,7 @@ fun CommunityScreen(navController: NavController, viewModel: CommunityViewModel 
 
     Scaffold (
         modifier = Modifier,
-        topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = darkBackground),
-                title = {
-                    Text(
-                        text = "Community",
-                        style = TextStyle(
-//                fontFamily = FontFamily.Default,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = white
-                        )
-                    )
-                }
-            )
-        },
+        topBar = {TopAppBar(title = {Text("Community")})},
         floatingActionButton = {AddPostButton(){navController.navigate(Graph.POST_CREATE)}}
     ) { it ->
         Column(modifier = Modifier.padding(it)) {
@@ -183,15 +166,6 @@ fun AddPostButton(onClick: () -> Unit) {
             contentDescription = "Create Post",
             tint = blue
         )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun CommunityTopBar() {
-    Column {
-
-
     }
 }
 
