@@ -19,6 +19,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,8 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -36,6 +41,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.finalproject.data.model.User
 import com.example.finalproject.ui.components.PostCard
 import com.example.finalproject.ui.theme.FinalProjectTheme
+import com.example.finalproject.ui.theme.darkBackground
+import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.CommunityViewModel
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -69,12 +76,28 @@ fun CommunityScreen(navController: NavController, viewModel: CommunityViewModel 
 
     Scaffold (
         modifier = Modifier,
-        topBar = {TopAppBar(title = {Text("Community")})}
+        topBar = {
+            TopAppBar(
+                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = darkBackground),
+                title = {
+                    Text(
+                        text = "Community",
+                        style = TextStyle(
+//                fontFamily = FontFamily.Default,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = white
+                        )
+                    )
+                }
+            )
+        }
     ) { it ->
         Column(modifier = Modifier.padding(it)) {
 
             Spacer(     // horizontal divisor
-                modifier = Modifier.imePadding()
+                modifier = Modifier
+                    .imePadding()
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(color = MaterialTheme.colorScheme.surfaceVariant)
@@ -106,7 +129,8 @@ fun CommunityScreen(navController: NavController, viewModel: CommunityViewModel 
                             navController,
                             post.id in user.value!!.savedPostIds,
                             viewModel::onSaveClicked,
-                            openPostDetailScreen
+                            openPostDetailScreen,
+                            viewModel::incrementView
                         )
                     }
                 }

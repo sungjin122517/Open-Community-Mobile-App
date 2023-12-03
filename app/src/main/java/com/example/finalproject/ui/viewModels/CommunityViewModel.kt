@@ -53,6 +53,12 @@ class CommunityViewModel @Inject constructor(
         Log.d(TAG, "Paco: newSaveCount: $newSaveCount")
     }
 
+    fun incrementView(post: Post) {
+        viewModelScope.launch {
+            service.incrementView(post)
+        }
+    }
+
     suspend fun updateSavePostIds() {
         Log.d(TAG, "Paco: new: ${savedPOstIds.toList()}")
         val updateMap = hashMapOf<String, List<String>>(
@@ -61,9 +67,9 @@ class CommunityViewModel @Inject constructor(
         service.updateUserField(updateMap)
     }
 
-    fun onPostClicked(postId: String, openPostDetailScreen: (String) -> Unit) {
-        state["post_id"] = postId
-        openPostDetailScreen(postId)
+    fun onPostClicked(post: Post, openPostDetailScreen: (String) -> Unit) {
+        state["post_id"] = post.id
+        openPostDetailScreen(post.id)
     }
 
     fun onSaveClicked(context: Context, post: Post, isSaved: Boolean) {

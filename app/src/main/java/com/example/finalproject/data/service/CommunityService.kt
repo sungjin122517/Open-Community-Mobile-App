@@ -21,4 +21,6 @@ interface CommunityService {
     suspend fun addReport(postId: String, reportMap: Map<String, Any>)
      suspend fun updateUserField(updateMap: Map<String, Any>)
     suspend fun delete(post: String)
+
+    suspend fun incrementView(post: Post)
 }
