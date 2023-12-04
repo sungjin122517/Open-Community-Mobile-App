@@ -33,6 +33,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -42,12 +44,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.example.finalproject.data.model.Response
 import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.green
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.AuthViewModel
+import com.example.finalproject.util.Utils
+import java.lang.Exception
 
 
 @Composable
@@ -63,6 +68,9 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
 //    val loginFlow = viewModel?.loginFlow?.collectAsState()
 
@@ -184,7 +192,7 @@ fun LoginScreen(
                     modifier = Modifier.padding(end = 8.dp)
                 ) {
                     Text(
-                        text = "Sign Up",
+                        text = "Do not have an account? Sign Up!",
                         style = TextStyle(
 //                            fontFamily = FontFamily.Default,
                             color = grey,
@@ -222,7 +230,8 @@ fun LoginScreen(
 
             OutlinedButton(
                 onClick = {
-                    viewModel.signInWithEmailAndPassword(email, password)
+                    keyboardController?.hide()
+                    viewModel.signInWithEmailAndPassword(email, password, context)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
