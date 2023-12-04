@@ -24,7 +24,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,7 +49,6 @@ import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.blue
 import com.example.finalproject.ui.viewModels.PostViewModel
 import com.example.finalproject.ui.theme.darkBackground
-import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.white
 import eu.bambooapps.material3.pullrefresh.PullRefreshIndicator
 import eu.bambooapps.material3.pullrefresh.pullRefresh
@@ -86,6 +84,7 @@ fun CommunityScreen(
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
 
     val savedPostIds = user.value!!.savedPostIds
+    val myPostIds = user.value!!.myPostIds
 
     Scaffold (
         modifier = Modifier,
@@ -137,19 +136,18 @@ fun CommunityScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(posts.value) {post ->
-                        if (!post.deleted) {
-                            PostCard(
-                                Modifier,
-                                post = post,
-                                navController,
-                                post.id in savedPostIds,
-                                viewModel::onSaveClicked,
-                                openPostDetailScreen,
-                                viewModel::incrementView,
-                                viewModel::getTimeDifference,
-                                false
-                            )
-                        }
+                        PostCard(
+                            Modifier, post, viewModel, navController,
+                            isSaved = post.id in savedPostIds,
+                            isMyPost = post.id in myPostIds,
+                            inDetailsScreen = false,
+                            openPostDetailScreen
+//                            viewModel::onSaveClicked,
+//                            ,
+//                            viewModel::incrementView,
+//                            viewModel::getTimeDifference,
+//                        isMyPost = (post.id in myPostIds)
+                        )
                     }
                 }
             }else {

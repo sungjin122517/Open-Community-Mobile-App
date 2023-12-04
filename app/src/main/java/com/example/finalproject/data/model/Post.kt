@@ -1,10 +1,8 @@
 package com.example.finalproject.data.model
 
 import android.content.Context
-import com.example.finalproject.data.firestore.fetchData
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
-import com.google.firebase.firestore.DocumentReference
 import java.util.Date
 
 enum class PostCategory(val value: String, val description: String) {
@@ -51,26 +49,5 @@ data class Post(
 //    var status = PostStatus(viewCount, commentCount, saveCount, isSaved)
 }
 
-fun fetchPost(postID: String, context: Context): Post {
-    // allow async fetching
-
-//    getUserID(context) {
-//        Log.d(TAG, "DocumentSnapshot data: $it")
-//    }
-    fetchData()
-    return Post(
-        postID,
-        PostCategory.ACADEMIC.name,
-        "This is title",
-        Timestamp(Date(0)),
-        "User 00",
-        "content",
-        false,
-        5,
-        0,
-        0,
-    )
-
-}
 
 
