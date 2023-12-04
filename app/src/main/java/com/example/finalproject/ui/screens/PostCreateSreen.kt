@@ -52,12 +52,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.finalproject.data.model.PostCategory
+import com.example.finalproject.ui.components.PopUpDialog
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.ui.theme.darkBackground
+import com.example.finalproject.ui.theme.darkgrey
 import com.example.finalproject.ui.theme.green
 import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.red
 import com.example.finalproject.ui.theme.white
+import com.example.finalproject.util.Utils
 
 
 @Composable
@@ -125,7 +128,7 @@ fun PostCreateScreen(
                         border = ButtonDefaults.outlinedButtonBorder,
                         shape = RoundedCornerShape(8),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selected) grey else Color.Transparent,
+                            containerColor = if (selected) darkgrey else Color.Transparent,
                             contentColor =  if (selected) green else white
                         ),
                         modifier = Modifier.padding(horizontal = 10.dp)
@@ -215,6 +218,8 @@ fun PostCreateScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCreateTopBar(navController: NavController) {
+    var showDialog by remember { mutableStateOf(false) }
+
     TopAppBar(
         modifier = Modifier,
         colors = TopAppBarDefaults.smallTopAppBarColors(
@@ -228,12 +233,32 @@ fun PostCreateTopBar(navController: NavController) {
             )
         },
         navigationIcon = {
-            IconButton(onClick = { navController.navigateUp() }) {
+            IconButton(
+                onClick = {
+//                    navController.navigateUp()
+                    showDialog = true
+                }
+            ) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
                     tint = white
                 )
+
+                if (showDialog) {
+                    PopUpDialog(
+                        title = "Discard Writings",
+                        body = "Are you sure you want to go back to the main page? (All you have written will be lost.",
+                        actionText = "Yes",
+                        onClose = {
+                            showDialog = false
+                        },
+                        onDismiss = {
+                            navController.navigateUp()
+                            showDialog = false // Hide the delete dialog
+                        }
+                    )
+                }
             }
         },
     )
@@ -250,6 +275,7 @@ fun PostCreateButton(
         onClick = {
             onPostCreate(context, category, title, content)
             navController.navigateUp()
+            Utils.showMessage(context, "Post Successful")
         },
         modifier = modifier
             .padding(bottom = 40.dp)

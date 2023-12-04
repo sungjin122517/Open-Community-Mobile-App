@@ -35,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +64,7 @@ import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.pink
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.PostViewModel
+import com.example.finalproject.util.Utils
 import java.text.SimpleDateFormat
 
 import java.util.Date
@@ -94,7 +96,8 @@ fun PostCard(
         // Define the layout and style of the card
         Card(
             modifier = modifier
-                .fillMaxWidth().background(darkerBackground),
+                .fillMaxWidth()
+                .background(darkerBackground),
     //        elevation = CardDefaults.cardElevation(
     //            defaultElevation = 8.dp
     //        ),
@@ -110,7 +113,7 @@ fun PostCard(
                     .padding(16.dp)
                     .fillMaxWidth()
                     .background(darkBackground)
-                    .clickable (
+                    .clickable(
                         interactionSource = interactionSource,
                         indication = null,
                         onClick = {
@@ -279,12 +282,15 @@ fun PostDropDownMenu(
 
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
     val myPostIds = user.value!!.myPostIds
+    val context = LocalContext.current
 
     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
 
         var expended by remember {
             mutableStateOf(false)
         }
+        var showDeleteDialog by remember { mutableStateOf(false) }
+
         IconButton(
             onClick = {
                 /* TODO: Add code to navigate to 'report' screen */
@@ -313,13 +319,35 @@ fun PostDropDownMenu(
                 DropdownMenuItem(
                     text = { Text("Delete") },
                     onClick = {
+//                        viewModel.onDelete(postId)
+                        showDeleteDialog = true
+                    }
+                )
+            }
+
+            // Show the delete dialog if the state variable is true
+            if (showDeleteDialog) {
+                PopUpDialog(
+                    title = "Delete Post",
+                    body = "Are you sure you want to delete this post?",
+                    actionText = "Delete",
+                    onClose = {
+                        showDeleteDialog = false
+                        expended =! expended
+                    },
+                    onDismiss = {
                         viewModel.onDelete(postId)
+                        expended = !expended
+                        showDeleteDialog = false // Hide the delete dialog
+                        Utils.showMessage(context, "Post successfully deleted")
                     }
                 )
             }
         }
     }
 }
+
+
 
 @Preview(showBackground = true)
 @Composable
