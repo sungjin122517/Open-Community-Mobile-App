@@ -1,5 +1,6 @@
 package com.example.finalproject.ui.navigation
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -12,6 +13,7 @@ import com.example.finalproject.ui.screens.loginFlow.VerifyEmailScreen
 @Composable
 fun RootNavigationGraph(
     navController: NavHostController,
+    startActivity: (Intent) -> Unit
 //    viewModel: AuthViewModel
 ) {
     NavHost(
@@ -28,7 +30,7 @@ fun RootNavigationGraph(
             )
         }
         composable(route = Graph.HOME) {
-            HomeScreen()
+            HomeScreen(startActivity=startActivity)
         }
         composable(route = Graph.SIGN_UP) {
             SignUpScreen(navController = navController)

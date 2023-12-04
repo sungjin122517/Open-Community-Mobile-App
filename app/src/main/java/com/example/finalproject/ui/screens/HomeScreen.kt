@@ -1,6 +1,7 @@
 package com.example.finalproject.ui.screens
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.imePadding
@@ -29,7 +30,8 @@ import com.example.finalproject.ui.theme.FinalProjectTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+            startActivity: (Intent) -> Unit
 ) {
     Scaffold(
         bottomBar = { BottomBar(navController = navController) },
@@ -38,7 +40,8 @@ fun HomeScreen(
                 modifier = Modifier.imePadding()
                     .padding(padding)
             ){
-                HomeNavGraph(navController = navController)
+                HomeNavGraph(navController = navController,
+                    startActivity)
             }
         }
     )
@@ -98,11 +101,11 @@ fun RowScope.AddItem(
 }
 
 
-@Preview
-@Composable
-fun HomeScreenPreview() {
-    FinalProjectTheme(darkTheme = true) {
-        val navController = rememberNavController()
-        HomeScreen(navController)
-    }
-}
+//@Preview
+//@Composable
+//fun HomeScreenPreview() {
+//    FinalProjectTheme(darkTheme = true) {
+//        val navController = rememberNavController()
+//        HomeScreen(navController)
+//    }
+//}

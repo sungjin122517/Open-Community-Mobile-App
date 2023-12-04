@@ -2,6 +2,8 @@ package com.example.finalproject.ui.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,11 +54,16 @@ import com.example.finalproject.ui.components.QuickView
 import com.example.finalproject.ui.navigation.Graph
 import com.example.finalproject.ui.theme.darkerBackground
 import com.example.finalproject.ui.theme.white
+import java.net.URL
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EventDetailsScreen(navController: NavHostController, eventViewModel: EventViewModel) {
+fun EventDetailsScreen(
+    navController: NavHostController,
+    eventViewModel: EventViewModel,
+    startActivity: (Intent) -> Unit
+) {
 //    val userInfoSnap = /* TODO: Add code to fetch user info snapshot */
 //    val isEventSaved = /* TODO: Add code to determine if the event is saved */
     val context = LocalContext.current
@@ -135,7 +142,10 @@ fun EventDetailsScreen(navController: NavHostController, eventViewModel: EventVi
                     ) {
                         Button(
                             onClick = {
-                                /* TODO: Add code to launch the event registration URL */
+                                Intent(Intent.ACTION_VIEW).also {
+                                    it.data = Uri.parse(event.registerLink)
+                                    startActivity(it)
+                                }
                             },
                             modifier = Modifier
                                 .fillMaxWidth(0.76f)
