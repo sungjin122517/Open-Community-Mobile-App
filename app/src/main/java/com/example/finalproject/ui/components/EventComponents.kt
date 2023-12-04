@@ -29,6 +29,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
@@ -87,15 +88,15 @@ fun EventPhoto(event: Event) {
 fun CategoryButton(value: String) {
     Row(
         modifier = Modifier
-            .height(35.dp),
+            .height(30.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .padding(horizontal = 5.dp)
+//                .padding(horizontal = 8.dp, vertical = 8.dp)
                 .clip(RoundedCornerShape(20))
                 .border(
-                    1.5.dp,
+                    1.2.dp,
                     green
                 )
                 .background(
@@ -105,7 +106,7 @@ fun CategoryButton(value: String) {
             Text(
                 text = value,
                 modifier = Modifier
-                    .padding(horizontal = 4.dp),
+                    .padding(horizontal = 4.dp, vertical = 3.dp),
                 color = green,
                 style = TextStyle(
                     fontSize = 13.sp
@@ -364,3 +365,11 @@ fun DetailedView(event: Event) {
         }
     }
 }
+
+@Preview
+@Composable
+fun CategoryButtonPreview() {
+    CategoryButton(value = "Category")
+}
+
+
