@@ -35,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +64,7 @@ import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.pink
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.PostViewModel
+import com.example.finalproject.util.Utils
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -265,6 +267,80 @@ fun PostCardStatus(
                 fontSize = 16.sp
             )
 
+        }
+    }
+}
+
+@Composable
+fun PostDropDownMenu(
+    postId: String,
+    navController: NavController,
+    viewModel: PostViewModel = hiltViewModel()
+    ) {
+
+    val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+    val myPostIds = user.value!!.myPostIds
+    val context = LocalContext.current
+
+    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+
+        var expended by remember {
+            mutableStateOf(false)
+        }
+        var showDeleteDialog by remember { mutableStateOf(false) }
+
+        IconButton(
+            onClick = {
+                /* TODO: Add code to navigate to 'report' screen */
+//                    navController.navigate(Graph.REPORT)
+                expended = true
+
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "Report"
+            )
+        }
+        DropdownMenu(
+            expanded = expended,
+            onDismissRequest = {
+                expended = false
+            },
+            modifier = Modifier
+        ) {
+            DropdownMenuItem(
+                text = { Text("Report") },
+                onClick = { navController.navigate("report_graph/$postId") }
+            )
+            if (myPostIds.contains(postId)) {
+                DropdownMenuItem(
+                    text = { Text("Delete") },
+                    onClick = {
+//                        viewModel.onDelete(postId)
+                        showDeleteDialog = true
+                    }
+                )
+            }
+
+            // Show the delete dialog if the state variable is true
+            if (showDeleteDialog) {
+                PopUpDialog(
+                    title = "Delete Post",
+                    body = "Are you sure you want to delete this post?",
+                    actionText = "Delete",
+                    onClose = {
+                        showDeleteDialog = false
+                        expended =! expended
+                    },
+                    onDismiss = {
+                        viewModel.onDelete(postId)
+                        expended = !expended
+                        showDeleteDialog = false // Hide the delete dialog
+                        Utils.showMessage(context, "Post successfully deleted")
+                    }
+                )
+            }
         }
     }
 }

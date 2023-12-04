@@ -186,7 +186,7 @@ fun AddPostButton(onClick: () -> Unit) {
         onClick = onClick,
     ) {
         Icon(
-            modifier = Modifier.size(150.dp),
+            modifier = Modifier.size(200.dp),
             imageVector = Icons.Filled.AddCircle,
             contentDescription = "Create Post",
             tint = blue

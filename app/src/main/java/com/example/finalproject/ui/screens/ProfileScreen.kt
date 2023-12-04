@@ -50,6 +50,7 @@ import com.example.finalproject.data.Preferences
 import com.example.finalproject.data.model.Post
 import com.example.finalproject.data.model.Response
 import com.example.finalproject.data.model.User
+import com.example.finalproject.ui.components.PopUpDialog
 import com.example.finalproject.ui.components.PostCard
 
 import com.example.finalproject.ui.theme.FinalProjectTheme
@@ -151,6 +152,8 @@ fun ProfileScreen(
 
     var openMenu by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf("")}
+    var showSignOutDialog by remember { mutableStateOf(false) }
+    var showDeleteAccDialog by remember { mutableStateOf(false) }
 
     Preferences.getUserName(context) {
         username = it ?: "User"
@@ -214,8 +217,9 @@ fun ProfileScreen(
                                 )
                             },
                             onClick = {
-                                profileViewModel.signOut()
-                                openMenu = !openMenu
+                                  showSignOutDialog = true
+//                                profileViewModel.signOut()
+//                                openMenu = !openMenu
                             },
                             colors = MenuDefaults.itemColors(darkBackground)
                         )
@@ -227,10 +231,47 @@ fun ProfileScreen(
                                 )
                             },
                             onClick = {
-                                profileViewModel.revokeAccess()
-                                openMenu = !openMenu
+                                showDeleteAccDialog = true
+//                                profileViewModel.revokeAccess()
+//                                openMenu = !openMenu
                             }
                         )
+
+                        if (showSignOutDialog) {
+                            PopUpDialog(
+                                title = "Sign Out",
+                                body = "Are you sure you want to sign out?",
+                                actionText = "Sign Out",
+                                onClose = {
+                                    showSignOutDialog = false
+                                    openMenu =! openMenu
+                                },
+                                onDismiss = {
+                                    profileViewModel.signOut()
+                                    openMenu = !openMenu
+                                    showSignOutDialog = false // Hide the delete dialog
+                                    showMessage(context, "Successfully signed out")
+                                }
+                            )
+                        }
+
+                        if (showDeleteAccDialog) {
+                            PopUpDialog(
+                                title = "Delete Account",
+                                body = "Are you sure you want to delete your account? Once you delete your account, it can't be restored.",
+                                actionText = "Delete Account",
+                                onClose = {
+                                    showSignOutDialog = false
+                                    openMenu =! openMenu
+                                },
+                                onDismiss = {
+                                    profileViewModel.signOut()
+                                    openMenu = !openMenu
+                                    showSignOutDialog = false // Hide the delete dialog
+//                                    showMessage(context, "Successfully signed out")
+                                }
+                            )
+                        }
                     }
                 }
             )
@@ -329,7 +370,6 @@ fun MyPostList(
                     inDetailsScreen = false,
                     openPostDetailScreen
                 )
-
             }
         }
     } else {
