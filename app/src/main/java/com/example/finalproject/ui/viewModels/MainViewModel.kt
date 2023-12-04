@@ -39,8 +39,8 @@ class MainViewModel @Inject constructor(
             user.collect() {user ->
                 context.userPreferences.edit { preferences ->
                     preferences[Preferences.USER_ID_KEY] = userID
-                    preferences[Preferences.USER_NAME_KEY] = user!!.name
-                    Log.d(TAG,"Paco: user Name = ${service.currentUser?.displayName.toString()}")
+                    preferences[Preferences.USER_NAME_KEY] = user!!.name        // add field to user (name)
+                    Log.d(TAG,"Paco: user Name = ${user!!.name}")
                 }
 
             }
