@@ -1,7 +1,5 @@
 package com.example.finalproject.ui.screens
 
-import android.content.Context
-import android.widget.ProgressBar
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +14,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -24,12 +21,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -64,9 +59,6 @@ import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.PostViewModel
 import com.example.finalproject.ui.viewModels.ProfileViewModel
 import com.example.finalproject.util.Utils.Companion.showMessage
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 @Composable
 fun UserGreetings(username: String) {
@@ -321,6 +313,7 @@ fun MyPostList(
 //    }
 
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
+    val savedPostIds = user.value!!.savedPostIds
     val myPostIds = user.value!!.myPostIds
 
     if (myPostIds.isNotEmpty()){
@@ -330,15 +323,11 @@ fun MyPostList(
             items(myPostIds.reversed()) {postId ->
                 val post = viewModel.fetchPost(postId).collectAsStateWithLifecycle(initialValue = Post())
                 PostCard(
-                    Modifier,
-                    post = post.value?: Post(),
-                    navController = navController,
-                    isSaved = postId in user.value!!.savedPostIds,
-                    viewModel::onSaveClicked,
-                    openPostDetailScreen,
-                    viewModel::incrementView,
-                    viewModel::getTimeDifference,
-                    false
+                    Modifier, post?.value ?: Post(), viewModel, navController,
+                    isSaved = post.value?.id in savedPostIds,
+                    isMyPost = post.value?.id in myPostIds,
+                    inDetailsScreen = false,
+                    openPostDetailScreen
                 )
 
             }
@@ -370,6 +359,7 @@ fun SavedPostList(
 
     val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
     val savedPostIds = user.value!!.savedPostIds
+    val myPostIds = user.value!!.myPostIds
 
     if (savedPostIds.isNotEmpty()){
         LazyColumn(modifier = modifier.fillMaxSize(),
@@ -380,15 +370,11 @@ fun SavedPostList(
                 val isDeleted = post.value?.deleted ?: false
                 if (post.value?.deleted == false) {
                     PostCard(
-                        Modifier,
-                        post = post.value?: Post(),
-                        navController = navController,
-                        isSaved = postId in user.value!!.savedPostIds,
-                        viewModel::onSaveClicked,
-                        openPostDetailScreen,
-                        viewModel::incrementView,
-                        viewModel::getTimeDifference,
-                        false
+                        Modifier, post.value ?: Post(), viewModel, navController,
+                        isSaved = post.value?.id in savedPostIds,
+                        isMyPost = post.value?.id in myPostIds,
+                        inDetailsScreen = false,
+                        openPostDetailScreen
                     )
                 }
 
