@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
+
 //            val postsVM = PostsViewModel(AppModule.provideStorageService())
 //            LaunchedEffect(postsVM) {
 //                val postList = postsVM.posts.onEach {
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
 //            }
             navController = rememberNavController()
             FinalProjectTheme(darkTheme = true) {
-                RootNavigationGraph(navController)
+                RootNavigationGraph(navController, this::startActivity)
             }
             AuthState()
         }

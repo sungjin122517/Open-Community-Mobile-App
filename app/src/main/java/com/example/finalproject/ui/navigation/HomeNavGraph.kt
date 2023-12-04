@@ -1,5 +1,6 @@
 package com.example.finalproject.ui.navigation
 
+import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -20,7 +21,8 @@ import com.example.finalproject.ui.viewModels.ProfileViewModel
 
 @Composable
 fun HomeNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    startActivity: (Intent) -> Unit
 ) {
     val context = LocalContext.current
     val eventViewModel: EventViewModel = hiltViewModel()
@@ -52,7 +54,7 @@ fun HomeNavGraph(
             route = Graph.EVENT_DETAILS
         ) {
 //            val event = navController.currentBackStackEntry?.savedStateHandle?.get<Event>("event")
-            EventDetailsScreen(navController, eventViewModel)
+            EventDetailsScreen(navController, eventViewModel, startActivity)
         }
         composable(
             route = Graph.PROFILE
