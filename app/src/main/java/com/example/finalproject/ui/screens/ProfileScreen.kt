@@ -363,13 +363,15 @@ fun MyPostList(
             horizontalAlignment = Alignment.CenterHorizontally) {
             items(myPostIds.reversed()) {postId ->
                 val post = viewModel.fetchPost(postId).collectAsStateWithLifecycle(initialValue = Post())
-                PostCard(
-                    Modifier, post?.value ?: Post(), viewModel, navController,
-                    isSaved = post.value?.id in savedPostIds,
-                    isMyPost = post.value?.id in myPostIds,
-                    inDetailsScreen = false,
-                    openPostDetailScreen
-                )
+                if (post.value?.deleted == false) {
+                    PostCard(
+                        Modifier, post?.value ?: Post(), viewModel, navController,
+                        isSaved = post.value?.id in savedPostIds,
+                        isMyPost = post.value?.id in myPostIds,
+                        inDetailsScreen = false,
+                        openPostDetailScreen
+                    )
+                }
             }
         }
     } else {
@@ -407,7 +409,7 @@ fun SavedPostList(
             horizontalAlignment = Alignment.CenterHorizontally) {
             items(savedPostIds.reversed()) {postId ->
                 val post = viewModel.fetchPost(postId).collectAsStateWithLifecycle(initialValue = Post())
-                val isDeleted = post.value?.deleted ?: false
+//                val isDeleted = post.value?.deleted ?: false
                 if (post.value?.deleted == false) {
                     PostCard(
                         Modifier, post.value ?: Post(), viewModel, navController,
@@ -433,9 +435,6 @@ fun SavedPostList(
 
 //    viewModel.savedPOstIds.li
 }
-
-
-
 
 @Preview(showBackground = true)
 @Composable

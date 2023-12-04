@@ -83,6 +83,8 @@ fun PostCard(
     Column {
         val interactionSource = remember { MutableInteractionSource() }
 
+        var showDeleteDialog by remember { mutableStateOf(false) }
+        val context = LocalContext.current
 
         Card(
             // Define the layout and style of the card
@@ -116,11 +118,30 @@ fun PostCard(
                     menuItems = listOf(
                         Pair("Report") { navController.navigate("report_graph/${post.id}") },
                         if (isMyPost) Pair("Delete") {
-                            postViewModel.onDelete(post.id)
+//                            postViewModel.onDelete(post.id)
+                            showDeleteDialog = true
                             if (inDetailsScreen) navController.navigateUp()                              // go back if in detail screen.
                         } else null         // is null when the post is not belongs to user
                     )
                 )
+
+                // Show the delete dialog if the state variable is true
+                if (showDeleteDialog) {
+                    PopUpDialog(
+                        title = "Delete Post",
+                        body = "Are you sure you want to delete this post?",
+                        actionText = "Delete",
+                        onClose = {
+                            showDeleteDialog = false
+                        },
+                        onDismiss = {
+                            postViewModel.onDelete(post.id)
+                            showDeleteDialog = false // Hide the delete dialog
+                            Utils.showMessage(context, "Post successfully deleted")
+                        }
+                    )
+                }
+
 
                 // Display the user name and the post time
                 Text(

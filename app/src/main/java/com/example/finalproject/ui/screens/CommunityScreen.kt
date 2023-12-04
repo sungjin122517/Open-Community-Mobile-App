@@ -136,18 +136,21 @@ fun CommunityScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(posts.value) {post ->
-                        PostCard(
-                            Modifier, post, viewModel, navController,
-                            isSaved = post.id in savedPostIds,
-                            isMyPost = post.id in myPostIds,
-                            inDetailsScreen = false,
-                            openPostDetailScreen
+                        if (!post.deleted) {
+                            PostCard(
+                                Modifier, post, viewModel, navController,
+                                isSaved = post.id in savedPostIds,
+                                isMyPost = post.id in myPostIds,
+                                inDetailsScreen = false,
+                                openPostDetailScreen
 //                            viewModel::onSaveClicked,
 //                            ,
 //                            viewModel::incrementView,
 //                            viewModel::getTimeDifference,
 //                        isMyPost = (post.id in myPostIds)
-                        )
+                            )
+                        }
+
                     }
                 }
             }else {
