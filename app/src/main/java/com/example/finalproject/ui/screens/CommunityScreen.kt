@@ -137,17 +137,19 @@ fun CommunityScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     items(posts.value) {post ->
-                        PostCard(
-                            Modifier,
-                            post = post,
-                            navController,
-                            post.id in savedPostIds,
-                            viewModel::onSaveClicked,
-                            openPostDetailScreen,
-                            viewModel::incrementView,
-                            viewModel::getTimeDifference,
-                            false
-                        )
+                        if (!post.deleted) {
+                            PostCard(
+                                Modifier,
+                                post = post,
+                                navController,
+                                post.id in savedPostIds,
+                                viewModel::onSaveClicked,
+                                openPostDetailScreen,
+                                viewModel::incrementView,
+                                viewModel::getTimeDifference,
+                                false
+                            )
+                        }
                     }
                 }
             }else {
@@ -186,7 +188,7 @@ fun AddPostButton(onClick: () -> Unit) {
         onClick = onClick,
     ) {
         Icon(
-            modifier = Modifier.size(150.dp),
+            modifier = Modifier.size(200.dp),
             imageVector = Icons.Filled.AddCircle,
             contentDescription = "Create Post",
             tint = blue

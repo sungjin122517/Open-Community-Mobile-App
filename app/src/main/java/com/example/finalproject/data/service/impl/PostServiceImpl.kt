@@ -75,9 +75,9 @@ class PostServiceImpl @Inject constructor(
 
 
     override suspend fun delete(postId: String) {
-//        firestore.collection(POST_COLLECTION).document(postId)
-//            .update(mapOf("deleted" to true)).await()
-        firestore.collection(POST_COLLECTION).document(postId).delete().await()
+        firestore.collection(POST_COLLECTION).document(postId)
+            .update(mapOf("deleted" to true)).await()
+//        firestore.collection(POST_COLLECTION).document(postId).delete().await()
     }
 
 
