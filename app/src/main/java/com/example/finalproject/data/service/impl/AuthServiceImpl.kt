@@ -36,7 +36,7 @@ class AuthServiceImpl @Inject constructor(
         userRef.set(
             mapOf(
                 "email" to email,
-                "username" to username,
+                "name" to username,
             )
         )
 //                }
