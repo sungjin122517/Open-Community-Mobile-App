@@ -125,8 +125,8 @@ fun PostCreateScreen(
                         border = ButtonDefaults.outlinedButtonBorder,
                         shape = RoundedCornerShape(8),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (selected) grey else Color.Transparent,
-                            contentColor =  if (selected) green else white
+                            containerColor = if (selected) MaterialTheme.colorScheme.surfaceVariant else Color.Transparent,
+                            contentColor =  white
                         ),
                         modifier = Modifier.padding(horizontal = 10.dp)
                     ) { Text(text = category.value)}

@@ -54,8 +54,8 @@ import androidx.navigation.NavController
 //import com.example.finalproject.data.checkSavedPost
 import com.example.finalproject.ui.theme.FinalProjectTheme
 import com.example.finalproject.data.model.Post
+import com.example.finalproject.data.model.PostCategory
 import com.example.finalproject.data.model.User
-import com.example.finalproject.data.model.fetchPost
 import com.example.finalproject.ui.theme.darkBackground
 import com.example.finalproject.ui.theme.darkerBackground
 import com.example.finalproject.ui.theme.green
@@ -63,90 +63,92 @@ import com.example.finalproject.ui.theme.grey
 import com.example.finalproject.ui.theme.pink
 import com.example.finalproject.ui.theme.white
 import com.example.finalproject.ui.viewModels.PostViewModel
+import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
-
 import java.util.Date
 
-val DEFAULT_DATE = Date(0)
-
-@SuppressLint("SimpleDateFormat")
-val dateFormatter = SimpleDateFormat("yyyy-MM-dd HH:mm")
-
-@SuppressLint("SimpleDateFormat")
-val minutesFormatter = SimpleDateFormat("m")
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCard(
     modifier: Modifier,
     post: Post,
+    postViewModel: PostViewModel,
     navController: NavController,
     isSaved: Boolean,
-    onSaveClicked: (Context, Post, Boolean) -> Unit,
+    isMyPost: Boolean = true,
+    inDetailsScreen: Boolean,
     openPostDetailScreen: (String) -> Unit,
-    incrementView: (String) -> Unit,
-    getTimeDifference: (Date, (String) -> Unit) -> Unit,
-    isInDetailsScreen: Boolean
 ) {
     Column {
         val interactionSource = remember { MutableInteractionSource() }
 
-        // Define the layout and style of the card
+
         Card(
+            // Define the layout and style of the card
             modifier = modifier
-                .fillMaxWidth().background(darkerBackground),
-    //        elevation = CardDefaults.cardElevation(
-    //            defaultElevation = 8.dp
-    //        ),
+                .fillMaxWidth()
+                .background(darkerBackground),
             shape = RectangleShape,
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surface,
             ),
-//            border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.surfaceVariant),
         ) {
             // Define the content of the card
             Column(
                 modifier = Modifier
-                    .padding(16.dp)
                     .fillMaxWidth()
+                    .padding(16.dp)
                     .background(darkBackground)
-                    .clickable (
+                    .clickable(
                         interactionSource = interactionSource,
                         indication = null,
                         onClick = {
-                            openPostDetailScreen(post.id)
-                            incrementView(post.id)
+                            openPostDetailScreen(post.id)           // navigate to PostDetail Screen
+                            postViewModel.incrementView(post.id)
                         }
                     )
             ) {
                 // Display Header
-                PostCardHeader(post.id, post.category, post.time.toDate(), navController, getTimeDifference)
+                PostCardHeader(
+                    post.category, post.time.toDate(),
+                    postViewModel::getTimeDifference,
+                    menuItems = listOf(
+                        Pair("Report") { navController.navigate("report_graph/${post.id}") },
+                        if (isMyPost) Pair("Delete") {
+                            postViewModel.onDelete(post.id)
+                            if (inDetailsScreen) navController.navigateUp()                              // go back if in detail screen.
+                        } else null         // is null when the post is not belongs to user
+                    )
+                )
+
                 // Display the user name and the post time
                 Text(
                     text = post.title,
-                    fontWeight = FontWeight.Normal,
+                    modifier = Modifier .padding(bottom=8.dp),
+                    color = white,
                     fontSize = 18.sp,
-                    modifier = Modifier
-                        .padding(bottom=8.dp),
-                    color = white
+                    fontWeight = FontWeight.Normal,
                 )
+
                 // Display the post content
                 Text(
                     text = post.content,
-                    fontSize = 16.sp,
                     modifier = Modifier
                         .padding(bottom = 8.dp)
                         .fillMaxWidth(),
                     color = grey,
-                    maxLines = if (isInDetailsScreen) Int.MAX_VALUE else 2,
-                    overflow = if (isInDetailsScreen) TextOverflow.Visible else TextOverflow.Ellipsis
+                    fontSize = 16.sp,
+                    maxLines = if (inDetailsScreen) Int.MAX_VALUE else 2,
+                    overflow = if (inDetailsScreen) TextOverflow.Visible else TextOverflow.Ellipsis
                 )
-                PostCardStatus(post, isSaved, onSaveClicked)
+
+                // Display Post stat count
+                PostCardStatus(post, isSaved, postViewModel::onSaveClicked)
 
             }
         }
 
-        Spacer(     // horizontal divisor
+        // Bottom border horizontal divisor
+        Spacer(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
@@ -157,34 +159,28 @@ fun PostCard(
 
 
 @Composable
-fun PostCardHeader(postId: String, category: String, date: Date, navController: NavController,
-                   getTimeDifference: (Date, (String) -> Unit) -> Unit) {
+fun PostCardHeader(
+    category: String,
+    date: Date,
+    getTimeDifference: (Date, (String) -> Unit) -> Unit,
+    menuItems: List<Pair<String, () -> Unit>?>
+) {
     var timeDifference by remember { mutableStateOf("") }
 
     getTimeDifference(date) {
         timeDifference = it
     }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        val iconImageVector = if (category == "Just Talk") {
-            Icons.Outlined.AddReaction
-        } else {
-            Icons.Outlined.LaptopMac
-        }
-        val iconTint = if (category == "Just Talk") {
-            green
-        } else {
-            pink
-        }
-        
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        /* ==== Category Icon ==== */
         Icon(
-            imageVector = iconImageVector,
-            contentDescription = "Likes",
-            tint = iconTint
+            imageVector = if (category == "Just Talk") Icons.Outlined.AddReaction else Icons.Outlined.LaptopMac,
+            contentDescription = "Post Category",
+            tint = if (category == "Just Talk") green else pink
         )
         Spacer(modifier = Modifier.width(8.dp))
+
+        /* ==== Category Name ==== */
         Text(
             text = category,
             fontWeight = FontWeight.Bold,
@@ -193,21 +189,24 @@ fun PostCardHeader(postId: String, category: String, date: Date, navController: 
         )
         Spacer(modifier = Modifier.width(8.dp))
 
+        /* ==== Post time ==== */
         Text(
-//            text = if (date != DEFAULT_DATE) dateFormatter.format(date) else "just now",
             text = timeDifference,
             color = grey,
             fontSize = 14.sp
         )
         Spacer(modifier = Modifier.width(8.dp))
 
-        PostDropDownMenu(postId, navController)
+        /* ==== More Action ==== */
+        DropDownMenu(menuItems)
     }
 }
 
+
 @Composable
 fun PostCardStatus(
-    post: Post, isSaved: Boolean,
+    post: Post,
+    isSaved: Boolean,
     onSaveClicked: (Context, Post, Boolean) -> Unit
 ) {
     val context = LocalContext.current
@@ -218,12 +217,9 @@ fun PostCardStatus(
             .fillMaxWidth()
             .padding(top = 8.dp),
         horizontalArrangement = Arrangement.SpaceEvenly,
-
-        ) {
+    ) {
         // Display the number of views
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically ) {
             Icon(
                 imageVector = Icons.Outlined.RemoveRedEye,
                 contentDescription = "Views"
@@ -234,6 +230,7 @@ fun PostCardStatus(
                 fontSize = 16.sp
             )
         }
+
         // Display the number of comments
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -248,13 +245,15 @@ fun PostCardStatus(
                 fontSize = 16.sp
             )
         }
+
         // Display the number of shares
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable(onClick = {
-                Log.d(TAG, "Paco: Click Saved")
-                onSaveClicked(context, post, isSaved)
-            })
+            modifier = Modifier.clickable(
+                onClick = {
+                    Log.d(TAG, "Paco: Click Saved")
+                    onSaveClicked(context, post, isSaved)
+                })
         ) {
             Icon(
                 imageVector = if (isSaved) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
@@ -270,80 +269,32 @@ fun PostCardStatus(
     }
 }
 
-@Composable
-fun PostDropDownMenu(
-    postId: String,
-    navController: NavController,
-    viewModel: PostViewModel = hiltViewModel()
-    ) {
 
-    val user = viewModel.user.collectAsStateWithLifecycle(initialValue = User())
-    val myPostIds = user.value!!.myPostIds
-
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
-
-        var expended by remember {
-            mutableStateOf(false)
-        }
-        IconButton(
-            onClick = {
-                /* TODO: Add code to navigate to 'report' screen */
-//                    navController.navigate(Graph.REPORT)
-                expended = true
-
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "Report"
-            )
-        }
-        DropdownMenu(
-            expanded = expended,
-            onDismissRequest = {
-                expended = false
-            },
-            modifier = Modifier
-        ) {
-            DropdownMenuItem(
-                text = { Text("Report") },
-                onClick = { navController.navigate("report_graph/$postId") }
-            )
-            if (myPostIds.contains(postId)) {
-                DropdownMenuItem(
-                    text = { Text("Delete") },
-                    onClick = {
-                        viewModel.onDelete(postId)
-                    }
-                )
-            }
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
 fun PostCardPreview() {
     FinalProjectTheme(darkTheme = true) {
-        val post = fetchPost("TEST_POST_ID", LocalContext.current)
+        val post = Post(
+            "TEST_POST_ID",
+            PostCategory.ACADEMIC.name,
+            "This is title",
+            Timestamp(Date(0)),
+            "User 00",
+            "content",
+            false,
+            5,
+            0,
+            0,
+        )
 
-        PostCard(modifier = Modifier, post, NavController(LocalContext.current), false,{ c, post, d -> null }, { s ->}, {post}, {d, s -> }, false
+        PostCard(
+            modifier = Modifier,
+            post, hiltViewModel(),
+            NavController(LocalContext.current),
+            false,
+            false, false, {}
         )
 
     }
-//    }
 }
-fun saveHandler(post: Post) {
-        if (post.isSaved) {
-            // unsaved
-//            setSaveCount(saveCount-1)
-            post.saveCount -= 1
-            post.isSaved = false
-        } else {
-//            setSaveCount(saveCount+1)
-            post.saveCount += 1
-            post.isSaved = true
-            // update local db
-        }
-        // update post
-    }
